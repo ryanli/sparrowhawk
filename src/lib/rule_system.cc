@@ -136,7 +136,7 @@ typedef fst::StringPrinter<StdArc> Printer;
 bool RuleSystem::ApplyRules(const string& input,
                             string* output,
                             bool use_lookahead) const {
-  Compiler compiler(fst::StringTokenType::BYTE);
+  Compiler compiler(fst::TokenType::BYTE);
   MutableTransducer input_fst, output_fst;
   if (!compiler.operator()(input, &input_fst)) {
     LoggerError("Failed to compile input string \"%s\"", input.c_str());
@@ -145,9 +145,9 @@ bool RuleSystem::ApplyRules(const string& input,
   if (!ApplyRules(input_fst, &output_fst, use_lookahead)) return false;
   MutableTransducer shortest_path;
   fst::ShortestPath(output_fst, &shortest_path);
-  fst::Project(&shortest_path, fst::PROJECT_OUTPUT);
+  fst::Project(&shortest_path, fst::ProjectType::OUTPUT);
   fst::RmEpsilon(&shortest_path);
-  Printer printer(fst::StringTokenType::BYTE);
+  Printer printer(fst::TokenType::BYTE);
   if (!printer.operator()(shortest_path, output)) {
     LoggerError("Failed to print output string");
     return false;
@@ -162,9 +162,9 @@ bool RuleSystem::ApplyRules(const Transducer& input,
   if (!ApplyRules(input, &output_fst, use_lookahead)) return false;
   MutableTransducer shortest_path;
   fst::ShortestPath(output_fst, &shortest_path);
-  fst::Project(&shortest_path, fst::PROJECT_OUTPUT);
+  fst::Project(&shortest_path, fst::ProjectType::OUTPUT);
   fst::RmEpsilon(&shortest_path);
-  Printer printer(fst::StringTokenType::BYTE);
+  Printer printer(fst::TokenType::BYTE);
   if (!printer.operator()(shortest_path, output)) {
     LoggerError("Failed to print to output string");
     return false;

@@ -80,6 +80,9 @@ class Normalizer {
   // normalize each of the resulting sentences.
   std::vector<string> SentenceSplitter(const string &input) const;
 
+  Normalizer(const Normalizer &) = delete;
+  Normalizer &operator=(const Normalizer &) = delete;
+
  private:
   // normalizer.cc
   // Internal interface to normalization.
@@ -142,8 +145,6 @@ class Normalizer {
   std::unique_ptr<SentenceBoundary> sentence_boundary_;
   std::unique_ptr<Serializer> spec_serializer_;
   std::set<string> sentence_boundary_exceptions_;
-
-  DISALLOW_COPY_AND_ASSIGN(Normalizer);
 };
 
 }  // namespace sparrowhawk

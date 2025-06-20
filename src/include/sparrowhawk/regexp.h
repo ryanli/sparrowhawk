@@ -74,13 +74,14 @@ class Regexp {
   // Deletes and resets internal data.
   void Clear();
 
+  Regexp(const Regexp &) = delete;
+  Regexp &operator=(const Regexp &) = delete;
+
  private:
   // The underlying compiled regexp object internal structure
   RE2 *re_;
 
-  int32 nsubexp_;
-
-  DISALLOW_COPY_AND_ASSIGN(Regexp);
+  int32_t nsubexp_;
 };
 
 }  // namespace sparrowhawk

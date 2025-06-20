@@ -59,6 +59,9 @@ class RecordSerializer {
   // input fst.
   bool Serialize(const Token &token, MutableTransducer *fst) const;
 
+  RecordSerializer(const RecordSerializer &) = delete;
+  RecordSerializer &operator=(const RecordSerializer &) = delete;
+
  private:
   typedef MutableTransducer::Arc Arc;
   typedef Arc::StateId StateId;
@@ -121,8 +124,6 @@ class RecordSerializer {
   bool SerializeAffixes(const Token &token,
                         MutableTransducer *prefix_fst,
                         MutableTransducer *suffix_fst) const;
-
-  DISALLOW_COPY_AND_ASSIGN(RecordSerializer);
 };
 
 }  // namespace sparrowhawk

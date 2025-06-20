@@ -51,6 +51,9 @@ class SentenceBoundary {
     pad_exceptions_with_space_prefix_ = pad_exceptions_with_space_prefix;
   }
 
+  SentenceBoundary(const SentenceBoundary &) = delete;
+  SentenceBoundary &operator=(const SentenceBoundary &) = delete;
+
  private:
   // Returns true if the candidate position is a plausible sentence
   // boundary. Currently uses the regexp and the sentence boundary exceptions
@@ -60,7 +63,6 @@ class SentenceBoundary {
   std::unique_ptr<Regexp> regexp_;
   std::vector<string> sentence_boundary_exceptions_;
   bool pad_exceptions_with_space_prefix_;
-  DISALLOW_COPY_AND_ASSIGN(SentenceBoundary);
 };
 
 }  // namespace sparrowhawk

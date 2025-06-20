@@ -57,6 +57,9 @@ class StyleSerializer {
   // records in the style are serialized onto the input fst.
   bool Serialize(const Token &token, MutableTransducer *serialization) const;
 
+  StyleSerializer(const StyleSerializer &) = delete;
+  StyleSerializer &operator=(const StyleSerializer &) = delete;
+
  private:
   // Only used by the factory function Create.
   StyleSerializer() {}
@@ -94,8 +97,6 @@ class StyleSerializer {
   // non-repeated, although the terminating field itself may be repeated.
   bool IsFieldSet(const google::protobuf::Message &root,
                   const FieldPath &field_path) const;
-
-  DISALLOW_COPY_AND_ASSIGN(StyleSerializer);
 };
 
 }  // namespace sparrowhawk

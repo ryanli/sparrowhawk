@@ -24,6 +24,7 @@
 #ifndef SPARROWHAWK_PROTOBUF_SERIALIZER_H_
 #define SPARROWHAWK_PROTOBUF_SERIALIZER_H_
 
+#include <string>
 #include <vector>
 using std::vector;
 
@@ -52,8 +53,8 @@ class ProtobufSerializer {
   // Serializes the message into the FST.
   void SerializeToFst();
 
-  // Serializes the message into a string
-  string SerializeToString() const;
+  // Serializes the message into a std::string
+  std::string SerializeToString() const;
 
  protected:
   typedef google::protobuf::FieldDescriptor FieldDescriptor;
@@ -79,11 +80,11 @@ class ProtobufSerializer {
                          int index,
                          StateId state);
 
-  // Serializes a string into the FST.
-  StateId SerializeString(const string &str, StateId state);
+  // Serializes a std::string into the FST.
+  StateId SerializeString(const std::string &str, StateId state);
 
   // As above, allowing control of whether quotes are optional or not.
-  StateId SerializeString(const string &str,
+  StateId SerializeString(const std::string &str,
                           StateId state,
                           bool optional_quotes);
 
@@ -96,6 +97,9 @@ class ProtobufSerializer {
   // permutations to a common destination.
   void StripTrailingSpace(StateId new_final_state);
 
+  ProtobufSerializer(const ProtobufSerializer &) = delete;
+  ProtobufSerializer &operator=(const ProtobufSerializer &) = delete;
+
   const google::protobuf::Message *message_;
   const google::protobuf::Reflection *reflection_;
   MutableTransducer *fst_;
@@ -103,8 +107,6 @@ class ProtobufSerializer {
   static const RE2 kReTrailingZeroes;
   static const int kReNumMatchGroups;
 
- private:
-  DISALLOW_COPY_AND_ASSIGN(ProtobufSerializer);
 };
 
 }  // namespace sparrowhawk

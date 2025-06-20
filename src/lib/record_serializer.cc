@@ -50,7 +50,7 @@ RecordSerializer::RecordSerializer()
                  string(kRecordSeparator) +
                  string(")")),
       escape_replacement_(string(kEscapedEscape) + string(R"(\0)")),
-      string_compiler_(fst::StringTokenType::BYTE) {}
+      string_compiler_(fst::TokenType::BYTE) {}
 
 std::unique_ptr<RecordSerializer> RecordSerializer::Create(
     const RecordSpec &record_spec) {

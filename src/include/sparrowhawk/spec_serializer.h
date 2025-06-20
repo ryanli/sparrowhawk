@@ -50,12 +50,15 @@ class Serializer {
   // different valid style_specs.
   MutableTransducer Serialize(const Token &token) const;
 
+  Serializer(const Serializer &) = delete;
+  Serializer &operator=(const Serializer &) = delete;
+
  private:
   typedef MutableTransducer::Arc Arc;
   typedef fst::StringCompiler<Arc> StringCompiler;
 
   // Only used by the factory function Create.
-  Serializer() : string_compiler_(fst::StringTokenType::BYTE) {}
+  Serializer() : string_compiler_(fst::TokenType::BYTE) {}
 
   // String Compiler for making fsts from strings.
   StringCompiler string_compiler_;
@@ -63,8 +66,6 @@ class Serializer {
   // Map to store the serialization indexed by field descriptors.
   std::map<const google::protobuf::FieldDescriptor*,
   std::vector<std::unique_ptr<StyleSerializer>>> serializers_;
-
-  DISALLOW_COPY_AND_ASSIGN(Serializer);
 };
 
 }  // namespace sparrowhawk

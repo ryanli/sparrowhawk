@@ -13,6 +13,7 @@
 // Copyright 2015 and onwards Google, Inc.
 #include <algorithm>
 #include <map>
+#include <string>
 
 #include <google/protobuf/text_format.h>
 #include <sparrowhawk/protobuf_serializer.h>
@@ -69,11 +70,11 @@ struct FindFieldByName {
   bool operator()(const FieldDescriptor *descriptor) const {
     return name_ == descriptor->name();
   }
-  const string name_;
+  const std::string name_;
 };
 
-inline string PrintToString(const google::protobuf::MessageLite &message) {
-  string output;
+inline std::string PrintToString(const google::protobuf::MessageLite &message) {
+  std::string output;
   message.SerializeToString(&output);
   return output;
 }
@@ -119,7 +120,7 @@ StateId ProtobufSerializer::SerializeToFstInternal() {
     const Descriptor *descriptor = message_->GetDescriptor();
     FieldDescriptorVector fields2;
     for (int i = 0, n = reflection_->FieldSize(*message_, *it); i < n; ++i) {
-      const string name = reflection_->GetRepeatedString(*message_, *it, i);
+      const std::string name = reflection_->GetRepeatedString(*message_, *it, i);
       const FieldDescriptor *field = descriptor->FindFieldByName(name);
       if (field == NULL) {
         // Shouldn't happen - would indicate that ProtobufParser had found a
@@ -202,11 +203,11 @@ StateId ProtobufSerializer::SerializeField(const FieldDescriptor *field,
     return SerializeString(" } ", state);
   } else {
     const StateId initial_state = state;
-    const string name = field->name();
+    const std::string name = field->name();
     state = SerializeString(name + ": ", state);
-    string value;
+    std::string value;
     if (field->type() == FieldDescriptor::TYPE_STRING) {
-      // Special handling for string fields, where we don't escape internal
+      // Special handling for std::string fields, where we don't escape internal
       // quotes with backslashes. This can't be disabled in TextFormat::Printer.
       if (index == -1) {
         value = "\"" + reflection_->GetString(*message_, field) + "\"";
@@ -231,11 +232,11 @@ StateId ProtobufSerializer::SerializeField(const FieldDescriptor *field,
   }
 }
 
-StateId ProtobufSerializer::SerializeString(const string &str, StateId state) {
+StateId ProtobufSerializer::SerializeString(const std::string &str, StateId state) {
   return SerializeString(str, state, false);
 }
 
-StateId ProtobufSerializer::SerializeString(const string &str,
+StateId ProtobufSerializer::SerializeString(const std::string &str,
                                             StateId state,
                                             bool optional_quotes) {
   // TODO(pebden): This assumes a byte-oriented FST. We could generalize it
@@ -267,7 +268,7 @@ StateId ProtobufSerializer::SerializeChar(char c, StateId state) {
   return next_state;
 }
 
-string ProtobufSerializer::SerializeToString() const {
+std::string ProtobufSerializer::SerializeToString() const {
   return PrintToString(*message_);
 }
 

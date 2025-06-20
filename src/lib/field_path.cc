@@ -19,6 +19,7 @@ using std::string;
 #include <vector>
 using std::vector;
 
+#include <absl/log/log.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
 #include <sparrowhawk/string_utils.h>

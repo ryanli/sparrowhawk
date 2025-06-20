@@ -116,10 +116,10 @@ int Regexp::GetAllMatches(const string &input,
     re_info.start_char = match_offset;
     re_info.end_char = match_offset + match_length;
     re_info.len = match_length;
-    re_info.full_str = matched_pieces[0].as_string();
+    re_info.full_str = std::string(matched_pieces[0]);
 
     for (int i = 1; i <= nsubexp_; ++i) {
-      re_info.sub_str.push_back(matched_pieces[i].as_string());
+      re_info.sub_str.emplace_back(matched_pieces[i]);
       int sub_match_start = matched_pieces[i].data() - input.c_str();
       re_info.sub_start.push_back(sub_match_start);
       re_info.sub_end.push_back(sub_match_start + matched_pieces[i].length());
