@@ -191,7 +191,7 @@ StateId ProtobufSerializer::SerializeField(const FieldDescriptor *field,
                                            int index,
                                            StateId state) {
   if (field->type() == FieldDescriptor::TYPE_MESSAGE) {
-    state = SerializeString(field->name() + " { ", state);
+    state = SerializeString(std::string(field->name()) + " { ", state);
     const Message *submessage;
     if (index == -1) {
       submessage = &reflection_->GetMessage(*message_, field);
@@ -203,7 +203,7 @@ StateId ProtobufSerializer::SerializeField(const FieldDescriptor *field,
     return SerializeString(" } ", state);
   } else {
     const StateId initial_state = state;
-    const std::string name = field->name();
+    const std::string name(field->name());
     state = SerializeString(name + ": ", state);
     std::string value;
     if (field->type() == FieldDescriptor::TYPE_STRING) {

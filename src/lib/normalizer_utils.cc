@@ -24,10 +24,11 @@
 #include <string>
 using std::string;
 
-#include <sparrowhawk/items.pb.h>
 #include <sparrowhawk/normalizer.h>
 #include <sparrowhawk/protobuf_serializer.h>
 #include <sparrowhawk/string_utils.h>
+
+#include "src/proto/items.pb.h"
 
 namespace speech {
 namespace sparrowhawk {

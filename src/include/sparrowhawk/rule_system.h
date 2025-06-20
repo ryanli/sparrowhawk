@@ -25,7 +25,7 @@ using std::string;
 #include <fst/compat.h>
 #include <google/protobuf/text_format.h>
 #include <thrax/grm-manager.h>
-#include <sparrowhawk/rule_order.pb.h>
+#include "src/proto/rule_order.pb.h"
 
 namespace speech {
 namespace sparrowhawk {

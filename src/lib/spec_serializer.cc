@@ -14,13 +14,14 @@
 #include <sparrowhawk/spec_serializer.h>
 
 #include <memory>
+#include <string>
 #include <vector>
 using std::vector;
 
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
-#include <sparrowhawk/items.pb.h>
-#include <sparrowhawk/serialization_spec.pb.h>
+#include "src/proto/items.pb.h"
+#include "src/proto/serialization_spec.pb.h"
 #include <sparrowhawk/style_serializer.h>
 
 namespace speech {
@@ -68,7 +69,7 @@ MutableTransducer Serializer::Serialize(const Token &token) const {
   const Reflection *reflection = token.GetReflection();
   for (const auto &candidate_class : serializers_) {
     if (reflection->HasField(token, candidate_class.first)) {
-      string_compiler_(candidate_class.first->name() + kClassSeparator,
+      string_compiler_(std::string(candidate_class.first->name()) + kClassSeparator,
                        &fst);
       MutableTransducer fst_styles;
       for (const auto &candidate_style : candidate_class.second) {

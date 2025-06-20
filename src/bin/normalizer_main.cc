@@ -34,21 +34,21 @@
 #include <iostream>
 #include <memory>
 #include <string>
-using std::string;
 #include <vector>
-using std::vector;
 
 #include <sparrowhawk/normalizer.h>
 
-DEFINE_bool(multi_line_text, false, "Text is spread across multiple lines.");
-DEFINE_string(config, "", "Path to the configuration proto.");
-DEFINE_string(path_prefix, "./", "Optional path prefix if not relative.");
+#include "absl/flags/flag.h"
 
-void NormalizeInput(const string& input,
+ABSL_FLAG(bool, multi_line_text, false, "Text is spread across multiple lines.");
+ABSL_FLAG(std::string, config, "", "Path to the configuration proto.");
+ABSL_FLAG(std::string, path_prefix, "./", "Optional path prefix if not relative.");
+
+void NormalizeInput(const std::string& input,
                     speech::sparrowhawk::Normalizer *normalizer) {
-  const std::vector<string> sentences = normalizer->SentenceSplitter(input);
+  const std::vector<std::string> sentences = normalizer->SentenceSplitter(input);
   for (const auto& sentence : sentences) {
-    string output;
+    std::string output;
     normalizer->Normalize(sentence, &output);
     std::cout << output << std::endl;
   }
@@ -60,10 +60,10 @@ int main(int argc, char** argv) {
   SET_FLAGS(argv[0], &argc, &argv, true);
   std::unique_ptr<Normalizer> normalizer;
   normalizer.reset(new Normalizer());
-  CHECK(normalizer->Setup(FLAGS_config, FLAGS_path_prefix));
-  string input;
-  if (FLAGS_multi_line_text) {
-    string line;
+  CHECK(normalizer->Setup(absl::GetFlag(FLAGS_config), absl::GetFlag(FLAGS_path_prefix)));
+  std::string input;
+  if (absl::GetFlag(FLAGS_multi_line_text)) {
+    std::string line;
     while (std::getline(std::cin, line)) {
       if (!input.empty()) input += " ";
       input += line;

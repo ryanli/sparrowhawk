@@ -17,7 +17,7 @@
 
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
-#include <sparrowhawk/items.pb.h>
+#include "src/proto/items.pb.h"
 #include <sparrowhawk/logger.h>
 #include <sparrowhawk/numbers.h>
 

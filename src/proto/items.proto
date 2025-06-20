@@ -14,8 +14,8 @@
 syntax = "proto2";
 
 // TODO(rws): Probably phase out links since we are not using it.
-import "links.proto";
-import "semiotic_classes.proto";
+import "src/proto/links.proto";
+import "src/proto/semiotic_classes.proto";
 
 package speech.sparrowhawk;
 

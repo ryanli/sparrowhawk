@@ -33,10 +33,11 @@ using std::vector;
 
 #include <fst/compat.h>
 #include <thrax/grm-manager.h>
-#include <sparrowhawk/items.pb.h>
-#include <sparrowhawk/serialization_spec.pb.h>
 #include <sparrowhawk/field_path.h>
 #include <re2/re2.h>
+
+#include "src/proto/items.pb.h"
+#include "src/proto/serialization_spec.pb.h"
 
 namespace speech {
 namespace sparrowhawk {

@@ -26,9 +26,10 @@ using std::vector;
 #include <fst/compat.h>
 #include <google/protobuf/descriptor.h>
 #include <thrax/grm-manager.h>
-#include <sparrowhawk/items.pb.h>
-#include <sparrowhawk/serialization_spec.pb.h>
 #include <sparrowhawk/style_serializer.h>
+
+#include "src/proto/items.pb.h"
+#include "src/proto/serialization_spec.pb.h"
 
 namespace speech {
 namespace sparrowhawk {
