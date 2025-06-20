@@ -5150,7 +5150,7 @@ esac
 
 
 CPPFLAGS="$CPPFLAGS -funsigned-char"
-CXXFLAGS="$CXXFLAGS -std=c++11"
+CXXFLAGS="$CXXFLAGS -std=c++17"
 
 
 

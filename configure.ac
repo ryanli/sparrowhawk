@@ -4,7 +4,7 @@ AM_INIT_AUTOMAKE([foreign nostdinc -Wall -Werror])
 AM_PROG_AR
 
 CPPFLAGS="$CPPFLAGS -funsigned-char"
-CXXFLAGS="$CXXFLAGS -std=c++11"
+CXXFLAGS="$CXXFLAGS -std=c++17"
 
 AC_PROG_CXX
 AC_DISABLE_STATIC
