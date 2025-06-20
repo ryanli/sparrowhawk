@@ -1,4 +1,4 @@
-AC_INIT([Sparrowhawk], [1.0.0], [rws@google.com])
+AC_INIT([Sparrowhawk],[1.0.0],[rws@google.com])
 AM_INIT_AUTOMAKE([foreign nostdinc -Wall -Werror])
 
 AM_PROG_AR
@@ -8,7 +8,7 @@ CXXFLAGS="$CXXFLAGS -std=c++11"
 
 AC_PROG_CXX
 AC_DISABLE_STATIC
-AC_PROG_LIBTOOL
+LT_INIT
 
 AC_CONFIG_SRCDIR([src/lib/normalizer.cc])
 AC_CONFIG_FILES([
