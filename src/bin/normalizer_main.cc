@@ -39,6 +39,7 @@
 
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
+#include "absl/log/initialize.h"
 
 ABSL_FLAG(bool, multi_line_text, false,
           "Text is spread across multiple lines.");
@@ -58,6 +59,7 @@ void NormalizeInput(const std::string &input,
 }
 
 int main(int argc, char **argv) {
+  absl::InitializeLog();
   absl::ParseCommandLine(argc, argv);
 
   using speech::sparrowhawk::Normalizer;
