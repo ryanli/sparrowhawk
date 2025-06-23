@@ -168,5 +168,6 @@ cc_binary(
     deps = [
         ":normalizer_lib",
         "@abseil-cpp//absl/flags:flag",
+        "@abseil-cpp//absl/flags:parse",
     ],
 )

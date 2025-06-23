@@ -38,6 +38,7 @@
 #include <sparrowhawk/normalizer.h>
 
 #include "absl/flags/flag.h"
+#include "absl/flags/parse.h"
 
 ABSL_FLAG(bool, multi_line_text, false, "Text is spread across multiple lines.");
 ABSL_FLAG(std::string, config, "", "Path to the configuration proto.");
@@ -54,9 +55,10 @@ void NormalizeInput(const std::string& input,
 }
 
 int main(int argc, char** argv) {
+  absl::ParseCommandLine(argc, argv);
+
   using speech::sparrowhawk::Normalizer;
   std::set_new_handler(FailedNewHandler);
-  SET_FLAGS(argv[0], &argc, &argv, true);
   std::unique_ptr<Normalizer> normalizer;
   normalizer.reset(new Normalizer());
   CHECK(normalizer->Setup(absl::GetFlag(FLAGS_config), absl::GetFlag(FLAGS_path_prefix)));
