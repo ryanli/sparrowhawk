@@ -277,7 +277,7 @@ bool RecordSerializer::Serialize(const Token &token,
   // must be a valid field as it parses) in the token, and returns without
   // modifying the fst in this case.
   int field_size;
-  bool repeated_field = field->label() == FieldDescriptor::LABEL_REPEATED;
+  bool repeated_field = field->is_repeated();
   if (repeated_field) {
     field_size = parent->GetReflection()->FieldSize(*parent, field);
     if (field_size == 0) {

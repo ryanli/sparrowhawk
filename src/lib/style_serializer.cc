@@ -114,7 +114,7 @@ bool StyleSerializer::IsFieldSet(const Message &root,
     return false;
   }
   const Reflection *parent_reflection = parent->GetReflection();
-  if (field->label() == FieldDescriptor::LABEL_REPEATED) {
+  if (field->is_repeated()) {
     // The field is assumed to be a scalar here.
     if (parent_reflection->FieldSize(*parent, field) == 0) {
       return false;

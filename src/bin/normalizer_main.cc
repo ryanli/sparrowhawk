@@ -18,17 +18,16 @@
 // sentence.
 //
 // As an example of use, build the test data here, and put them somewhere, such
-// as tmp/sparrowhawk_test
+// as /tmp/sparrowhawk_af.textproto.
 //
 // Then copy the relevant fars and protos there, edit the protos and then run:
 //
-// blaze-bin/speech/tts/open_source/sparrowhawk/normalizer_main \
-//  --config tmp/sparrowhawk_test/sparrowhawk_configuration_af.ascii_proto
+// bazel run //:normalizer -- --config=/tmp/sparrowhawk_af.textproto
 //
 // Then input a few sentences on one line such as:
 //
-// Kameelperde het 'n kenmerkende voorkoms, met hul lang nekke en relatief \
-// kort lywe. Hulle word 4,3 - 5,7m lank. Die bulle is effens langer as die \
+// Kameelperde het 'n kenmerkende voorkoms, met hul lang nekke en relatief
+// kort lywe. Hulle word 4,3 - 5,7m lank. Die bulle is effens langer as die
 // koeie.
 
 #include <iostream>
