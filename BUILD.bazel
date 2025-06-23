@@ -80,13 +80,15 @@ cc_library(
     ],
     hdrs = [
         "src/include/sparrowhawk/io_utils.h",
-        "src/include/sparrowhawk/logger.h",
         "src/include/sparrowhawk/string_utils.h",
     ],
     copts = ["-Wno-sign-compare"],
     includes = ["src/include"],
     visibility = ["//visibility:private"],
-    deps = ["@openfst//:base"],
+    deps = [
+        "@openfst//:base",
+        "@abseil-cpp//absl/log",
+    ],
 )
 
 cc_library(

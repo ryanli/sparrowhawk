@@ -18,7 +18,7 @@
 using std::ifstream;
 #include <memory>
 
-#include <sparrowhawk/logger.h>
+#include "absl/log/log.h"
 
 namespace speech {
 namespace sparrowhawk {
@@ -26,7 +26,7 @@ namespace sparrowhawk {
 string IOStream::LoadFileToString(const string &filename) {
   std::ifstream strm(filename.c_str(), std::ios_base::in);
   if (!strm) {
-    LoggerFatal("Error opening file %s", filename.c_str());
+    LOG(FATAL) << "Error opening file " << filename;
   }
   strm.seekg(0, strm.end);
   int length = strm.tellg();
@@ -35,7 +35,7 @@ string IOStream::LoadFileToString(const string &filename) {
                                std::default_delete<char[]>());
   strm.read(data.get(), length);
   if (strm.fail()) {
-    LoggerFatal("Error loading from file %s", filename.c_str());
+    LOG(FATAL) << "Error loading from file" << filename;
   }
   data.get()[length] = 0;
   return string(data.get(), length);

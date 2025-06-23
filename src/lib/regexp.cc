@@ -14,7 +14,8 @@
 #include <sparrowhawk/regexp.h>
 
 #include <memory>
-#include <sparrowhawk/logger.h>
+
+#include "absl/log/log.h"
 
 namespace speech {
 namespace sparrowhawk {
@@ -50,13 +51,11 @@ bool Regexp::Compile(const string &pattern) {
   re_ = new RE2(pattern, options);
 
   if (re_ == nullptr) {
-    LoggerError("Error in allocating regexp \"%s\"", pattern.c_str());
+    LOG(ERROR) << "Error in allocating regexp \"" << pattern << "\"";
     return false;
   }
   if (!re_->ok()) {
-    LoggerError("Error in allocating regexp \"%s\": %s",
-                pattern.c_str(),
-                re_->error().c_str());
+    LOG(ERROR) << "Error in allocating regexp \"" << pattern << "\": " << re_->error();
     Clear();
     return false;
   }

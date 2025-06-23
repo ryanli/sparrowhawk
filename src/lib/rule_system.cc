@@ -15,7 +15,6 @@
 
 #include <google/protobuf/text_format.h>
 #include <sparrowhawk/io_utils.h>
-#include <sparrowhawk/logger.h>
 
 namespace speech {
 namespace sparrowhawk {
@@ -39,8 +38,7 @@ bool RuleSystem::LoadGrammar(const string& filename, const string& prefix) {
   grammar_name_ = grammar_.grammar_name();
   grm_.reset(new GrmManager);
   if (!grm_->LoadArchive(grm_file)) {
-    LoggerError("Error loading archive \"%s\" from \"%s\"",
-                grammar_name_.c_str(), grm_file.c_str());
+    LOG(ERROR) << "Error loading archive \"" << grammar_name_ << "\" from \"" << grm_file << "\"";
     return false;
   }
   // Verifies that the rules named in the rule ordering all exist in the
@@ -48,18 +46,15 @@ bool RuleSystem::LoadGrammar(const string& filename, const string& prefix) {
   for (int i = 0; i < grammar_.rules_size(); ++i) {
     Rule rule = grammar_.rules(i);
     if (grm_->GetFst(rule.main()) == NULL) {
-      LoggerError("Rule \"%s\" not found in \"%s\"",
-                  rule.main().c_str(), grammar_name_.c_str());
+      LOG(ERROR) << "Rule \"" << rule.main() << "\" not found in \"" << grammar_name_ << "\"";
       return false;
     }
     if (rule.has_parens() && grm_->GetFst(rule.parens()) == NULL) {
-      LoggerError("Rule \"%s\" not found in \"%s\"",
-                  rule.parens().c_str(), grammar_name_.c_str());
+      LOG(ERROR) << "Rule \"" << rule.parens() << "\" not found in \"" << grammar_name_ << "\"";
       return false;
     }
     if (rule.has_redup() && grm_->GetFst(rule.redup()) == NULL) {
-      LoggerError("Rule \"%s\" not found in \"%s\"",
-                  rule.redup().c_str(), grammar_name_.c_str());
+      LOG(ERROR) << "Rule \"" << rule.redup() << "\" not found in \"" << grammar_name_ << "\"";
       return false;
     }
   }
@@ -118,7 +113,7 @@ bool RuleSystem::ApplyRules(const Transducer& input,
       success = false;
     }
     if (!success) {
-      LoggerError("Application of rule \"%s\" failed", rule_name.c_str());
+      LOG(ERROR) << "Application of rule \"" << rule_name << "\" failed";
       return false;
     }
     mutable_input = *output;
@@ -139,7 +134,7 @@ bool RuleSystem::ApplyRules(const string& input,
   Compiler compiler(fst::TokenType::BYTE);
   MutableTransducer input_fst, output_fst;
   if (!compiler.operator()(input, &input_fst)) {
-    LoggerError("Failed to compile input string \"%s\"", input.c_str());
+    LOG(ERROR) << "Failed to compile input string \"" << input << "\"";
     return false;
   }
   if (!ApplyRules(input_fst, &output_fst, use_lookahead)) return false;
@@ -149,7 +144,7 @@ bool RuleSystem::ApplyRules(const string& input,
   fst::RmEpsilon(&shortest_path);
   Printer printer(fst::TokenType::BYTE);
   if (!printer.operator()(shortest_path, output)) {
-    LoggerError("Failed to print output string");
+    LOG(ERROR) << "Failed to print output string";
     return false;
   }
   return true;
@@ -166,7 +161,7 @@ bool RuleSystem::ApplyRules(const Transducer& input,
   fst::RmEpsilon(&shortest_path);
   Printer printer(fst::TokenType::BYTE);
   if (!printer.operator()(shortest_path, output)) {
-    LoggerError("Failed to print to output string");
+    LOG(ERROR) << "Failed to print to output string";
     return false;
   }
   return true;

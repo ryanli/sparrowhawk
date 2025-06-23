@@ -20,9 +20,10 @@ using std::string;
 using std::vector;
 
 #include <sparrowhawk/io_utils.h>
-#include <sparrowhawk/logger.h>
 #include <sparrowhawk/regexp.h>
 #include <sparrowhawk/string_utils.h>
+
+#include "absl/log/log.h"
 
 namespace speech {
 namespace sparrowhawk {
@@ -31,7 +32,7 @@ SentenceBoundary::SentenceBoundary(const string &regexp) :
     pad_exceptions_with_space_prefix_(true) {
   regexp_.reset(new Regexp);
   if (!regexp_->Compile(regexp)) {
-    LoggerFatal("SentenceBoundary failed with bad regexp: %s", regexp.c_str());
+    LOG(FATAL) << "SentenceBoundary failed with bad regexp: " << regexp;
   }
 }
 

@@ -18,7 +18,6 @@
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
 #include "src/proto/items.pb.h"
-#include <sparrowhawk/logger.h>
 #include <sparrowhawk/numbers.h>
 
 namespace speech {
@@ -45,13 +44,13 @@ bool ProtobufParser::ParseTokensFromFST(Utterance *utt,
                                         bool set_semiotic_class,
                                         bool fix_lookahead) {
   if (state_ == fst::kNoStateId) {
-    LoggerError("Attempt to parse tokens from invalid state.");
+    LOG(ERROR) << "Attempt to parse tokens from invalid state.";
     return false;
   }
   string label;
   while (ConsumeLabel(&label)) {
     if (label != "tokens") {
-      LoggerError("Unknown top-level label [%s]", label.c_str());
+      LOG(ERROR) << "Unknown top-level label [" << label << "]";
       LogError();
       return false;
     } else if (fix_lookahead) {
@@ -145,7 +144,7 @@ bool ProtobufParser::ParseMessage(bool eof_allowed, Message *message) {
       if (eof_allowed) {
         return RecordFieldOrder(message, field_order);
       } else {
-        LoggerError("Failed to consume field label.");
+        LOG(ERROR) << "Failed to consume field label.";
         return false;
       }
     }
@@ -156,13 +155,13 @@ bool ProtobufParser::ParseMessage(bool eof_allowed, Message *message) {
     // don't want the grammar writer to specify this and have the parser add
     // additional information since therein massive confusion lies.
     if (label == "field_order") {
-      LoggerError("field_order should not be specified in the input");
+      LOG(ERROR) << "field_order should not be specified in the input";
       return false;
     }
     const FieldDescriptor *field_descriptor =
         descriptor->FindFieldByName(label);
     if (field_descriptor == NULL) {
-      LoggerError("Unknown field: [%s]", label.c_str());
+      LOG(ERROR) << "Unknown field: [" << label << "]";
       return false;
     }
     field_order.push_back(label);
@@ -204,7 +203,7 @@ bool ProtobufParser::ParseFieldValue(string *value) {
       value->push_back(olabel_);
     }
   }
-  LoggerError("Unexpected EOF while reading field");
+  LOG(ERROR) << "Unexpected EOF while reading field";
   return false;
 }
 
@@ -223,12 +222,12 @@ bool ProtobufParser::ParseQuotedFieldValue(bool ignore_backslashes,
     }
   }
   if (!ignore_backslashes) {
-    LoggerWarn("Failure reading field; will try ignoring backslashes.");
+    LOG(WARNING) << "Failure reading field; will try ignoring backslashes.";
     value->clear();
     state_ = initial_state;
     return ParseQuotedFieldValue(true, value);
   } else {
-    LoggerError("Unexpected EOF while reading field");
+    LOG(ERROR) << "Unexpected EOF while reading field";
     return false;
   }
 }
@@ -247,8 +246,7 @@ bool ProtobufParser::RecordFieldOrder(Message *message,
   } else if (order_field == NULL || !order_field->is_repeated()) {
     // This is an error: we specified that we wanted to preserve the order, but
     // we don't have repeated field_order field to store the fields in.
-    LoggerError("preserve_order requested but no field_order repeated"
-                "string fields");
+    LOG(ERROR) << "preserve_order requested but no field_order repeated string fields";
     return false;
   }
   for (int i = 0; i < field_order.size(); ++i) {
@@ -321,7 +319,7 @@ void ProtobufParser::LogError() {
       message.push_back(olabel_);
     }
   }
-  LoggerError("Full input: [%s]", message.c_str());
+  LOG(ERROR) << "Full input: [" << message << "]";
 }
 
 // Helper macro for SetField function, pinched from text_format.cc.
@@ -350,7 +348,7 @@ void ProtobufParser::SetField(google::protobuf::Message *message,
       if (value_set) {
         SET_FIELD(Float, value_float);
       } else {
-        LoggerError("Unable to convert string to float.");
+        LOG(ERROR) << "Unable to convert string to float.";
       }
       break;
     }
@@ -370,7 +368,7 @@ void ProtobufParser::SetField(google::protobuf::Message *message,
       if (value_set) {
         SET_FIELD(Int32, value_int32);
       } else {
-        LoggerError("Unable to convert string to int32.");
+        LOG(ERROR) << "Unable to convert string to int32.";
       }
       break;
     }
@@ -380,7 +378,7 @@ void ProtobufParser::SetField(google::protobuf::Message *message,
       if (value_set) {
         SET_FIELD(Int64, value_int64);
       } else {
-        LoggerError("Unable to convert string to int64.");
+        LOG(ERROR) << "Unable to convert string to int64.";
       }
       break;
     }
@@ -389,7 +387,7 @@ void ProtobufParser::SetField(google::protobuf::Message *message,
       const EnumValueDescriptor *enum_desc =
           descriptor->FindEnumValueByName(value);
       if (enum_desc == NULL) {
-        LoggerError("Unknown enumeration value %d", value.c_str());
+        LOG(ERROR) << "Unknown enumeration value " << value;
         return;
       }
       if (field->is_repeated()) {
@@ -399,11 +397,11 @@ void ProtobufParser::SetField(google::protobuf::Message *message,
       }
     }
     case FieldDescriptor::CPPTYPE_MESSAGE: {
-      LoggerError("Can't set message fields with ProtobufParser::SetField.");
+      LOG(ERROR) << "Can't set message fields with ProtobufParser::SetField.";
       return;
     }
     default: {
-      LoggerError("Unknown field type %s", field->cpp_type());
+      LOG(ERROR) << "Unknown field type " << field->cpp_type();
       return;
     }
   }
