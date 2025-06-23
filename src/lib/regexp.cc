@@ -25,9 +25,7 @@ Regexp::Regexp() {
   nsubexp_ = -1;
 }
 
-Regexp::~Regexp() {
-  Clear();
-}
+Regexp::~Regexp() { Clear(); }
 
 void Regexp::Clear() {
   delete re_;
@@ -35,13 +33,9 @@ void Regexp::Clear() {
   nsubexp_ = -1;
 }
 
-int Regexp::nsubexp() const {
-  return nsubexp_;
-}
+int Regexp::nsubexp() const { return nsubexp_; }
 
-bool Regexp::ok() const {
-  return re_ != nullptr && re_->ok();
-}
+bool Regexp::ok() const { return re_ != nullptr && re_->ok(); }
 
 bool Regexp::Compile(const string &pattern) {
   Clear();
@@ -55,7 +49,8 @@ bool Regexp::Compile(const string &pattern) {
     return false;
   }
   if (!re_->ok()) {
-    LOG(ERROR) << "Error in allocating regexp \"" << pattern << "\": " << re_->error();
+    LOG(ERROR) << "Error in allocating regexp \"" << pattern
+               << "\": " << re_->error();
     Clear();
     return false;
   }
@@ -94,13 +89,10 @@ int Regexp::GetAllMatches(const string &input,
   matches->clear();
   re2::StringPiece input_piece(input);
 
-  std::unique_ptr<re2::StringPiece[]> matched_pieces(new re2::StringPiece[1 + nsubexp_]);
-  bool result = re_->Match(input_piece,
-                           offset,
-                           end_pos,
-                           RE2::UNANCHORED,
-                           matched_pieces.get(),
-                           1 + nsubexp_);
+  std::unique_ptr<re2::StringPiece[]> matched_pieces(
+      new re2::StringPiece[1 + nsubexp_]);
+  bool result = re_->Match(input_piece, offset, end_pos, RE2::UNANCHORED,
+                           matched_pieces.get(), 1 + nsubexp_);
   RegMatch re_info;
   while (result) {
     nmatches++;
@@ -126,12 +118,8 @@ int Regexp::GetAllMatches(const string &input,
 
     matches->push_back(re_info);
     offset = re_info.end_char;
-    result = re_->Match(input_piece,
-                       offset,
-                       end_pos,
-                       RE2::UNANCHORED,
-                       matched_pieces.get(),
-                       1 + nsubexp_);
+    result = re_->Match(input_piece, offset, end_pos, RE2::UNANCHORED,
+                        matched_pieces.get(), 1 + nsubexp_);
   }
   return nmatches;
 }

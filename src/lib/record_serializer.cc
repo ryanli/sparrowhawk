@@ -21,19 +21,20 @@ using std::vector;
 
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
-#include "src/proto/items.pb.h"
-#include "src/proto/serialization_spec.pb.h"
+#include <re2/re2.h>
 #include <sparrowhawk/field_path.h>
 #include <sparrowhawk/string_utils.h>
-#include <re2/re2.h>
+
+#include "src/proto/items.pb.h"
+#include "src/proto/serialization_spec.pb.h"
 
 namespace speech {
 namespace sparrowhawk {
 
 using google::protobuf::Descriptor;
 using google::protobuf::FieldDescriptor;
-using google::protobuf::Reflection;
 using google::protobuf::Message;
+using google::protobuf::Reflection;
 
 namespace {
 
@@ -44,11 +45,8 @@ const char kRecordSeparator[] = "|";
 }  // namespace
 
 RecordSerializer::RecordSerializer()
-    : escape_re_(string("(") +
-                 string(kEscapedEscape) +
-                 string(R"()|(\)") +
-                 string(kRecordSeparator) +
-                 string(")")),
+    : escape_re_(string("(") + string(kEscapedEscape) + string(R"()|(\)") +
+                 string(kRecordSeparator) + string(")")),
       escape_replacement_(string(kEscapedEscape) + string(R"(\0)")),
       string_compiler_(fst::TokenType::BYTE) {}
 
@@ -249,16 +247,16 @@ bool RecordSerializer::SerializeAffixes(const Token &token,
   prefix_fst->SetStart(prefix_fst->AddState());
   prefix_fst->SetFinal(0, 1);
   for (const auto &prefix_serializer : prefix_serializers_) {
-     if (!prefix_serializer->Serialize(token, prefix_fst)) {
-       return false;
-     }
+    if (!prefix_serializer->Serialize(token, prefix_fst)) {
+      return false;
+    }
   }
   suffix_fst->SetStart(suffix_fst->AddState());
   suffix_fst->SetFinal(0, 1);
   for (const auto &suffix_serializer : suffix_serializers_) {
-     if (!suffix_serializer->Serialize(token, suffix_fst)) {
-       return false;
-     }
+    if (!suffix_serializer->Serialize(token, suffix_fst)) {
+      return false;
+    }
   }
   return true;
 }
@@ -295,7 +293,7 @@ bool RecordSerializer::Serialize(const Token &token,
 
   MutableTransducer prefix_fst, suffix_fst;
   if (!SerializeAffixes(token, &prefix_fst, &suffix_fst)) {
-     return false;
+    return false;
   }
   std::vector<MutableTransducer> serializations;
   if (repeated_field) {

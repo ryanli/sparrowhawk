@@ -25,8 +25,8 @@ using std::vector;
 
 #include <fst/compat.h>
 #include <google/protobuf/descriptor.h>
-#include <thrax/grm-manager.h>
 #include <sparrowhawk/style_serializer.h>
+#include <thrax/grm-manager.h>
 
 #include "src/proto/items.pb.h"
 #include "src/proto/serialization_spec.pb.h"
@@ -65,8 +65,9 @@ class Serializer {
   StringCompiler string_compiler_;
 
   // Map to store the serialization indexed by field descriptors.
-  std::map<const google::protobuf::FieldDescriptor*,
-  std::vector<std::unique_ptr<StyleSerializer>>> serializers_;
+  std::map<const google::protobuf::FieldDescriptor *,
+           std::vector<std::unique_ptr<StyleSerializer>>>
+      serializers_;
 };
 
 }  // namespace sparrowhawk

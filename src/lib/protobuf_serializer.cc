@@ -11,12 +11,12 @@
 // limitations under the License.
 //
 // Copyright 2015 and onwards Google, Inc.
+#include <google/protobuf/text_format.h>
+#include <sparrowhawk/protobuf_serializer.h>
+
 #include <algorithm>
 #include <map>
 #include <string>
-
-#include <google/protobuf/text_format.h>
-#include <sparrowhawk/protobuf_serializer.h>
 
 namespace speech {
 namespace sparrowhawk {
@@ -27,34 +27,29 @@ typedef Arc::Weight Weight;
 typedef ProtobufSerializer::StateId StateId;
 typedef fst::MutableArcIterator<MutableTransducer> MutableArcIterator;
 
-using fst::RmEpsilon;
 using fst::kNoLabel;
+using fst::RmEpsilon;
 using google::protobuf::Descriptor;
 using google::protobuf::EnumValueDescriptor;
 using google::protobuf::FieldDescriptor;
 using google::protobuf::Message;
 using google::protobuf::Reflection;
-using google::protobuf::Message;
 
 ProtobufSerializer::ProtobufSerializer(const Message *message,
                                        MutableTransducer *fst)
     : message_(message),
       reflection_(message->GetReflection()),
       fst_(fst),
-      initial_state_(0) {
-}
+      initial_state_(0) {}
 
 ProtobufSerializer::ProtobufSerializer(const Message *message,
-                                       MutableTransducer *fst,
-                                       StateId state)
+                                       MutableTransducer *fst, StateId state)
     : message_(message),
       reflection_(message->GetReflection()),
       fst_(fst),
-      initial_state_(state) {
-}
+      initial_state_(state) {}
 
-ProtobufSerializer::~ProtobufSerializer() {
-}
+ProtobufSerializer::~ProtobufSerializer() {}
 
 namespace {
 
@@ -96,10 +91,8 @@ StateId ProtobufSerializer::SerializeToFstInternal() {
   }
   // add one extra state to link all the permutations up to.
   StateId finish = fst_->AddState();
-  FieldDescriptorVector::const_iterator it =
-      std::find_if(fields.begin(),
-                   fields.end(),
-                   FindFieldByName("preserve_order"));
+  FieldDescriptorVector::const_iterator it = std::find_if(
+      fields.begin(), fields.end(), FindFieldByName("preserve_order"));
   bool preserve_order = false;
   const FieldDescriptor *preserve_order_field = NULL;
   if (it != fields.end()) {
@@ -107,12 +100,11 @@ StateId ProtobufSerializer::SerializeToFstInternal() {
     preserve_order_field = *it;
     // Check to make sure we have a field_order field. If we don't then set
     // truth to false.
-    it = std::find_if(fields.begin(),
-                      fields.end(),
+    it = std::find_if(fields.begin(), fields.end(),
                       FindFieldByName("field_order"));
     if (it == fields.end()) {
-        LOG(WARNING) << "preserve_order is true,"
-          << " but no field_order field defined for this message";
+      LOG(WARNING) << "preserve_order is true,"
+                   << " but no field_order field defined for this message";
       preserve_order = false;
     }
   }
@@ -120,7 +112,8 @@ StateId ProtobufSerializer::SerializeToFstInternal() {
     const Descriptor *descriptor = message_->GetDescriptor();
     FieldDescriptorVector fields2;
     for (int i = 0, n = reflection_->FieldSize(*message_, *it); i < n; ++i) {
-      const std::string name = reflection_->GetRepeatedString(*message_, *it, i);
+      const std::string name =
+          reflection_->GetRepeatedString(*message_, *it, i);
       const FieldDescriptor *field = descriptor->FindFieldByName(name);
       if (field == NULL) {
         // Shouldn't happen - would indicate that ProtobufParser had found a
@@ -139,11 +132,11 @@ StateId ProtobufSerializer::SerializeToFstInternal() {
     do {
       SerializePermutation(fields);
       StripTrailingSpace(finish);
-    // TODO(nielse): Remove hack for b/17619322: The complexity of this code is
-    // factorial in the number of fields, therefore we limit it to 5040
-    // permutations, which is enough for 7 fields (7! = 5040).
-    // With more than seven fields we always have at least the standard
-    // ordering based on field number.
+      // TODO(nielse): Remove hack for b/17619322: The complexity of this code
+      // is factorial in the number of fields, therefore we limit it to 5040
+      // permutations, which is enough for 7 fields (7! = 5040).
+      // With more than seven fields we always have at least the standard
+      // ordering based on field number.
     } while (std::next_permutation(fields.begin(), fields.end(), comp) &&
              ++count < 5040);
   }
@@ -188,8 +181,7 @@ void ProtobufSerializer::StripTrailingSpace(StateId new_final_state) {
 }
 
 StateId ProtobufSerializer::SerializeField(const FieldDescriptor *field,
-                                           int index,
-                                           StateId state) {
+                                           int index, StateId state) {
   if (field->type() == FieldDescriptor::TYPE_MESSAGE) {
     state = SerializeString(std::string(field->name()) + " { ", state);
     const Message *submessage;
@@ -212,8 +204,8 @@ StateId ProtobufSerializer::SerializeField(const FieldDescriptor *field,
       if (index == -1) {
         value = "\"" + reflection_->GetString(*message_, field) + "\"";
       } else {
-        value = "\"" +
-            reflection_->GetRepeatedString(*message_, field, index) + "\"";
+        value = "\"" + reflection_->GetRepeatedString(*message_, field, index) +
+                "\"";
       }
     } else {
       google::protobuf::TextFormat::Printer printer;
@@ -232,7 +224,8 @@ StateId ProtobufSerializer::SerializeField(const FieldDescriptor *field,
   }
 }
 
-StateId ProtobufSerializer::SerializeString(const std::string &str, StateId state) {
+StateId ProtobufSerializer::SerializeString(const std::string &str,
+                                            StateId state) {
   return SerializeString(str, state, false);
 }
 
@@ -252,10 +245,10 @@ StateId ProtobufSerializer::SerializeString(const std::string &str,
   }
   // Add an alternate serialization without the beginning/ending quotes.
   // They're optional, but must be taken together or not at all.
-  if (!optional_quotes &&
-      str.size() >= 2 && str[0] == '"' && str[str.size() - 1] == '"') {
-    StateId end_state = SerializeString(str.substr(1, str.size() - 2),
-                                        first_state);
+  if (!optional_quotes && str.size() >= 2 && str[0] == '"' &&
+      str[str.size() - 1] == '"') {
+    StateId end_state =
+        SerializeString(str.substr(1, str.size() - 2), first_state);
     fst_->AddArc(end_state, Arc(0, 0, Weight::One(), state));
   }
   return state;

@@ -32,8 +32,8 @@ using std::string;
 using std::vector;
 
 #include <fst/compat.h>
-#include <sparrowhawk/sentence_boundary.h>
 #include <sparrowhawk/rule_system.h>
+#include <sparrowhawk/sentence_boundary.h>
 #include <sparrowhawk/spec_serializer.h>
 
 #include "src/proto/items.pb.h"
@@ -99,14 +99,12 @@ class Normalizer {
 
   // normalizer_utils.cc
   // Adds a single word to the end of the Word stream
-  Word* AddWord(Utterance *utt, Token *token,
-                const string &spelling) const;
+  Word *AddWord(Utterance *utt, Token *token, const string &spelling) const;
 
   // normalizer_utils.cc
   // Function to add the words in the string 'name' onto the
   // end of the Word stream.
-  Word* AddWords(Utterance *utt, Token *token,
-                 const string &name) const;
+  Word *AddWords(Utterance *utt, Token *token, const string &name) const;
 
   // Finds the index of the provided token.
   int TokenIndex(Utterance *utt, Token *token) const;

@@ -28,8 +28,8 @@ using std::vector;
 namespace speech {
 namespace sparrowhawk {
 
-SentenceBoundary::SentenceBoundary(const string &regexp) :
-    pad_exceptions_with_space_prefix_(true) {
+SentenceBoundary::SentenceBoundary(const string &regexp)
+    : pad_exceptions_with_space_prefix_(true) {
   regexp_.reset(new Regexp);
   if (!regexp_->Compile(regexp)) {
     LOG(FATAL) << "SentenceBoundary failed with bad regexp: " << regexp;

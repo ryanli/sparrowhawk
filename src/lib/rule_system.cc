@@ -11,10 +11,9 @@
 // limitations under the License.
 //
 // Copyright 2015 and onwards Google, Inc.
-#include <sparrowhawk/rule_system.h>
-
 #include <google/protobuf/text_format.h>
 #include <sparrowhawk/io_utils.h>
+#include <sparrowhawk/rule_system.h>
 
 namespace speech {
 namespace sparrowhawk {
@@ -23,13 +22,13 @@ using fst::LabelLookAheadRelabeler;
 using fst::StdArc;
 
 RuleSystem::~RuleSystem() {
-  std::map<string, LookaheadFst*>::iterator iter;
+  std::map<string, LookaheadFst *>::iterator iter;
   for (iter = lookaheads_.begin(); iter != lookaheads_.end(); iter++) {
     delete iter->second;
   }
 }
 
-bool RuleSystem::LoadGrammar(const string& filename, const string& prefix) {
+bool RuleSystem::LoadGrammar(const string &filename, const string &prefix) {
   // This is the contents of filename.
   string proto_string = IOStream::LoadFileToString(prefix + filename);
   if (!google::protobuf::TextFormat::ParseFromString(proto_string, &grammar_))
@@ -38,7 +37,8 @@ bool RuleSystem::LoadGrammar(const string& filename, const string& prefix) {
   grammar_name_ = grammar_.grammar_name();
   grm_.reset(new GrmManager);
   if (!grm_->LoadArchive(grm_file)) {
-    LOG(ERROR) << "Error loading archive \"" << grammar_name_ << "\" from \"" << grm_file << "\"";
+    LOG(ERROR) << "Error loading archive \"" << grammar_name_ << "\" from \""
+               << grm_file << "\"";
     return false;
   }
   // Verifies that the rules named in the rule ordering all exist in the
@@ -46,29 +46,31 @@ bool RuleSystem::LoadGrammar(const string& filename, const string& prefix) {
   for (int i = 0; i < grammar_.rules_size(); ++i) {
     Rule rule = grammar_.rules(i);
     if (grm_->GetFst(rule.main()) == NULL) {
-      LOG(ERROR) << "Rule \"" << rule.main() << "\" not found in \"" << grammar_name_ << "\"";
+      LOG(ERROR) << "Rule \"" << rule.main() << "\" not found in \""
+                 << grammar_name_ << "\"";
       return false;
     }
     if (rule.has_parens() && grm_->GetFst(rule.parens()) == NULL) {
-      LOG(ERROR) << "Rule \"" << rule.parens() << "\" not found in \"" << grammar_name_ << "\"";
+      LOG(ERROR) << "Rule \"" << rule.parens() << "\" not found in \""
+                 << grammar_name_ << "\"";
       return false;
     }
     if (rule.has_redup() && grm_->GetFst(rule.redup()) == NULL) {
-      LOG(ERROR) << "Rule \"" << rule.redup() << "\" not found in \"" << grammar_name_ << "\"";
+      LOG(ERROR) << "Rule \"" << rule.redup() << "\" not found in \""
+                 << grammar_name_ << "\"";
       return false;
     }
   }
   return true;
 }
 
-bool RuleSystem::ApplyRules(const Transducer& input,
-                            MutableTransducer* output,
+bool RuleSystem::ApplyRules(const Transducer &input, MutableTransducer *output,
                             bool use_lookahead) const {
   MutableTransducer mutable_input(input);
   for (int i = 0; i < grammar_.rules_size(); ++i) {
     Rule rule = grammar_.rules(i);
     if (rule.has_redup()) {
-      const string& redup_rule = rule.redup();
+      const string &redup_rule = rule.redup();
       MutableTransducer redup1;
       // Not an error if it fails.
       if (grm_->Rewrite(redup_rule, mutable_input, &redup1, "")) {
@@ -78,13 +80,12 @@ bool RuleSystem::ApplyRules(const Transducer& input,
         fst::RmEpsilon(&mutable_input);
       }
     }
-    const string& rule_name = rule.main();
+    const string &rule_name = rule.main();
     string parens_rule = rule.has_parens() ? rule.parens() : "";
     // Only use lookahead on non (M)PDT's
     bool success = true;
-    if (parens_rule.empty()
-        && use_lookahead) {
-      std::map<string, LookaheadFst*>::iterator iter =
+    if (parens_rule.empty() && use_lookahead) {
+      std::map<string, LookaheadFst *>::iterator iter =
           lookaheads_.find(rule_name);
       LookaheadFst *lookahead_rule_fst;
       if (iter == lookaheads_.end()) {
@@ -95,21 +96,15 @@ bool RuleSystem::ApplyRules(const Transducer& input,
         lookahead_rule_fst = iter->second;
       }
       LabelLookAheadRelabeler<StdArc>::Relabel(&mutable_input,
-                                               *lookahead_rule_fst,
-                                               false);
-      fst::ComposeFst<StdArc> tmp_output(mutable_input,
-                                             *lookahead_rule_fst);
+                                               *lookahead_rule_fst, false);
+      fst::ComposeFst<StdArc> tmp_output(mutable_input, *lookahead_rule_fst);
       *output = tmp_output;
       if (output->NumStates() == 0) {
         success = false;
       }
       // Otherwise we just use the regular rewrite mechanism
-    } else if (!grm_->Rewrite(rule_name,
-                              mutable_input,
-                              output,
-                              parens_rule
-                              )
-        || output->NumStates() == 0) {
+    } else if (!grm_->Rewrite(rule_name, mutable_input, output, parens_rule) ||
+               output->NumStates() == 0) {
       success = false;
     }
     if (!success) {
@@ -128,8 +123,7 @@ bool RuleSystem::ApplyRules(const Transducer& input,
 typedef fst::StringCompiler<StdArc> Compiler;
 typedef fst::StringPrinter<StdArc> Printer;
 
-bool RuleSystem::ApplyRules(const string& input,
-                            string* output,
+bool RuleSystem::ApplyRules(const string &input, string *output,
                             bool use_lookahead) const {
   Compiler compiler(fst::TokenType::BYTE);
   MutableTransducer input_fst, output_fst;
@@ -150,8 +144,7 @@ bool RuleSystem::ApplyRules(const string& input,
   return true;
 }
 
-bool RuleSystem::ApplyRules(const Transducer& input,
-                            string* output,
+bool RuleSystem::ApplyRules(const Transducer &input, string *output,
                             bool use_lookahead) const {
   MutableTransducer output_fst;
   if (!ApplyRules(input, &output_fst, use_lookahead)) return false;
@@ -167,10 +160,9 @@ bool RuleSystem::ApplyRules(const Transducer& input,
   return true;
 }
 
-const Transducer* RuleSystem::FindRule(const string& name) const {
+const Transducer *RuleSystem::FindRule(const string &name) const {
   return grm_->GetFst(name);
 }
-
 
 }  // namespace sparrowhawk
 }  // namespace speech

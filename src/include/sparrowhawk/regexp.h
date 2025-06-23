@@ -65,8 +65,7 @@ class Regexp {
 
   // Gets vector of start and end chars for all matching string parts
   // returns number of matches.  Fills the matches vector with RegMatch objects.
-  int GetAllMatches(const string &input,
-                    std::vector<RegMatch> *matches) const;
+  int GetAllMatches(const string &input, std::vector<RegMatch> *matches) const;
 
   // Accessor for boolean whether this has been successfully compiled
   bool ok() const;

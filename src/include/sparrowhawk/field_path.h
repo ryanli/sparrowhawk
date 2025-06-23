@@ -36,19 +36,22 @@ class FieldPath {
   // Creates and returns a FieldPath using a descriptor for the type of
   // messages we intend to Follow().
   // Returns a null value if the input pointer is null.
-  static std::unique_ptr<FieldPath> Create(const google::protobuf::Descriptor *root_type);
+  static std::unique_ptr<FieldPath> Create(
+      const google::protobuf::Descriptor *root_type);
 
   // Replaces this field_path with input path_string of type:
   //               (message_name.)*scalar_field_name
   // Returns false if an error occurs with either the format of the string or
   // with mismatches of type (e.g. a subfield of an integer) or label (i.e. an
   // index is supplied when the field is not repeated.)
-  bool Parse(const string& path_string);
+  bool Parse(const string &path_string);
 
   // Clear all fields from path.
   void Clear();
 
-  inline const google::protobuf::Descriptor *GetRootType() const { return root_type_; }
+  inline const google::protobuf::Descriptor *GetRootType() const {
+    return root_type_;
+  }
 
   // Number of fields on this path. Does not count the root as a field.
   inline int GetLength() const { return path_.size(); }
@@ -64,7 +67,8 @@ class FieldPath {
   // Returns false only if the base message is incorrect (the only error that
   // can't be detected at parsing time); in this case *parent and *field are
   // unchanged.
-  bool Follow(const google::protobuf::Message& base, const google::protobuf::Message **parent,
+  bool Follow(const google::protobuf::Message &base,
+              const google::protobuf::Message **parent,
               const google::protobuf::FieldDescriptor **field) const;
 
  private:
@@ -81,7 +85,7 @@ class FieldPath {
   bool ParseTerminalField(const string &terminal_field_name,
                           const google::protobuf::Descriptor *parent);
 
-  std::vector<const google::protobuf::FieldDescriptor*> path_;
+  std::vector<const google::protobuf::FieldDescriptor *> path_;
   const google::protobuf::Descriptor *root_type_;
 };
 

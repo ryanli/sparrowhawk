@@ -35,10 +35,10 @@ syntax = "proto2";
 package speech.sparrowhawk;
 
 message Rule {
-  required string main = 1;  // Main normalization rule.
-  optional string parens = 2;  // Optional PDT parens.
+  required string main = 1;         // Main normalization rule.
+  optional string parens = 2;       // Optional PDT parens.
   optional string assignments = 3;  // Optional MPDT assignments.
-  optional string redup = 4;  // Optional reduplication rule.
+  optional string redup = 4;        // Optional reduplication rule.
 };
 
 message Grammar {

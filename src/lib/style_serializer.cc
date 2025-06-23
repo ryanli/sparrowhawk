@@ -22,20 +22,21 @@ using std::vector;
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
 #include <google/protobuf/text_format.h>
-#include "src/proto/items.pb.h"
-#include "src/proto/serialization_spec.pb.h"
 #include <sparrowhawk/field_path.h>
 #include <sparrowhawk/record_serializer.h>
 #include <sparrowhawk/string_utils.h>
+
+#include "src/proto/items.pb.h"
+#include "src/proto/serialization_spec.pb.h"
 
 namespace speech {
 namespace sparrowhawk {
 
 using google::protobuf::Descriptor;
 using google::protobuf::FieldDescriptor;
+using google::protobuf::Message;
 using google::protobuf::Reflection;
 using google::protobuf::TextFormat;
-using google::protobuf::Message;
 
 bool StyleSerializer::CreateRecordSerializers(
     const StyleSpec &style_spec,
@@ -58,8 +59,7 @@ bool StyleSerializer::SetRequiredFieldPaths(
   const Descriptor *token_descriptor = Token::descriptor();
   for (const string &required_fields : style_spec.required_fields()) {
     std::vector<FieldPath> any_of;
-    for (const auto &required_field :
-         SplitString(required_fields, "|")) {
+    for (const auto &required_field : SplitString(required_fields, "|")) {
       std::unique_ptr<FieldPath> field_path =
           FieldPath::Create(token_descriptor);
       any_of.push_back(*field_path);
@@ -81,8 +81,7 @@ bool StyleSerializer::SetProhibitedFieldPaths(
   for (const string &prohibited_field : style_spec.prohibited_fields()) {
     std::vector<FieldPath> &prohibited_fields =
         style_serializer->prohibited_fields_;
-    std::unique_ptr<FieldPath> field_path =
-        FieldPath::Create(token_descriptor);
+    std::unique_ptr<FieldPath> field_path = FieldPath::Create(token_descriptor);
     prohibited_fields.push_back(*field_path);
     if (!prohibited_fields.back().Parse(prohibited_field)) {
       LOG(ERROR) << "FieldPath failed to parse for prohibited field: "
@@ -163,7 +162,6 @@ bool StyleSerializer::Serialize(const Token &token,
   }
   return true;
 }
-
 
 }  // namespace sparrowhawk
 }  // namespace speech

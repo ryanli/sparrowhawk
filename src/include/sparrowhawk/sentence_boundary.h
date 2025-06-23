@@ -46,8 +46,8 @@ class SentenceBoundary {
   // so that it when matching against a potential end-of-sentence position, it
   // will force the match to occur only when there is a preceding space, or at
   // the beginning of the string.
-  void set_pad_exceptions_with_space_prefix(bool
-                                            pad_exceptions_with_space_prefix) {
+  void set_pad_exceptions_with_space_prefix(
+      bool pad_exceptions_with_space_prefix) {
     pad_exceptions_with_space_prefix_ = pad_exceptions_with_space_prefix;
   }
 

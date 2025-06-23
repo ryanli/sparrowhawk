@@ -102,8 +102,8 @@ message Token {
   // wordids are provided.
   optional bool skip = 12;
 
-  // Is true if a space follows this token. E.g., after tokenization in Chinese/Japanese.
-  // Currently unused.
+  // Is true if a space follows this token. E.g., after tokenization in
+  // Chinese/Japanese. Currently unused.
   optional bool next_space = 13;
 
   // All the following (fields in the range [14-27]) are used when
@@ -174,7 +174,6 @@ message Word {
   optional int32 parent = 6;
 
   extensions 1000 to max;
-
 }
 
 // A single utterance's linguistic structure

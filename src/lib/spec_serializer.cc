@@ -20,9 +20,10 @@ using std::vector;
 
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
+#include <sparrowhawk/style_serializer.h>
+
 #include "src/proto/items.pb.h"
 #include "src/proto/serialization_spec.pb.h"
-#include <sparrowhawk/style_serializer.h>
 
 namespace speech {
 namespace sparrowhawk {
@@ -44,7 +45,7 @@ std::unique_ptr<Serializer> Serializer::Create(
   const Descriptor *token_descriptor = Token::descriptor();
   for (const ClassSpec &class_spec : serialize_spec.class_spec()) {
     const FieldDescriptor *class_descriptor =
-      token_descriptor->FindFieldByName(class_spec.semiotic_class());
+        token_descriptor->FindFieldByName(class_spec.semiotic_class());
     if (class_descriptor == nullptr) {
       LOG(ERROR) << "Cannot find " << class_spec.semiotic_class()
                  << " field in Token proto";
@@ -69,8 +70,8 @@ MutableTransducer Serializer::Serialize(const Token &token) const {
   const Reflection *reflection = token.GetReflection();
   for (const auto &candidate_class : serializers_) {
     if (reflection->HasField(token, candidate_class.first)) {
-      string_compiler_(std::string(candidate_class.first->name()) + kClassSeparator,
-                       &fst);
+      string_compiler_(
+          std::string(candidate_class.first->name()) + kClassSeparator, &fst);
       MutableTransducer fst_styles;
       for (const auto &candidate_style : candidate_class.second) {
         MutableTransducer fst_style;

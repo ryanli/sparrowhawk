@@ -30,8 +30,8 @@ using std::string;
 using std::vector;
 
 #include <fst/compat.h>
-#include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
+#include <google/protobuf/message.h>
 #include <thrax/grm-manager.h>
 
 namespace speech {
@@ -53,8 +53,7 @@ class ProtobufParser {
   // other streams such as Word, Specification, etc.
   // This assumes that the FST has a unique path through it
   // (ie. has been created via ShortestPath())
-  bool ParseTokensFromFST(Utterance *utt,
-                          bool set_semiotic_class = true,
+  bool ParseTokensFromFST(Utterance *utt, bool set_semiotic_class = true,
                           bool fix_lookahead = false);
 
   // Parses the given message from the member FST.
@@ -100,8 +99,7 @@ class ProtobufParser {
   void PrevState();
 
   // Updates start/end indices on a token that we've just parsed.
-  void UpdateTokenIndices(Token *token,
-                          bool set_semiotic_class,
+  void UpdateTokenIndices(Token *token, bool set_semiotic_class,
                           bool fix_lookahead);
 
   // Logs an error message on parsing fail.

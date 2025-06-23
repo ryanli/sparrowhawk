@@ -33,11 +33,12 @@ using std::vector;
 
 #include <fst/compat.h>
 #include <google/protobuf/message.h>
-#include <thrax/grm-manager.h>
-#include "src/proto/items.pb.h"
-#include "src/proto/serialization_spec.pb.h"
 #include <sparrowhawk/field_path.h>
 #include <sparrowhawk/record_serializer.h>
+#include <thrax/grm-manager.h>
+
+#include "src/proto/items.pb.h"
+#include "src/proto/serialization_spec.pb.h"
 
 namespace speech {
 namespace sparrowhawk {
@@ -65,15 +66,18 @@ class StyleSerializer {
   StyleSerializer() {}
 
   // Populates record_serializers_ using style_spec.
-  static bool CreateRecordSerializers(const StyleSpec &style_spec,
+  static bool CreateRecordSerializers(
+      const StyleSpec &style_spec,
       const std::unique_ptr<StyleSerializer> &style_serializer);
 
   // Populates required_fields_ using style_spec.
-  static bool SetRequiredFieldPaths(const StyleSpec &style_spec,
+  static bool SetRequiredFieldPaths(
+      const StyleSpec &style_spec,
       const std::unique_ptr<StyleSerializer> &style_serializer);
 
   // Populates prohibited_fields_ using style_spec.
-  static bool SetProhibitedFieldPaths(const StyleSpec &style_spec,
+  static bool SetProhibitedFieldPaths(
+      const StyleSpec &style_spec,
       const std::unique_ptr<StyleSerializer> &style_serializer);
 
   // Checks required_fields_ in token.

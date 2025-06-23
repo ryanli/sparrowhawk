@@ -25,9 +25,8 @@ std::vector<string> SplitString(const string &s, const string &delims) {
   return SplitString(s, delims, false);
 }
 
-std::vector<string> SplitString(const string &s,
-                           const string &delims,
-                           bool skip_empty) {
+std::vector<string> SplitString(const string &s, const string &delims,
+                                bool skip_empty) {
   std::vector<string> out;
   if (s.empty()) {
     return out;

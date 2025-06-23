@@ -31,8 +31,7 @@ using google::protobuf::Descriptor;
 using google::protobuf::FieldDescriptor;
 using google::protobuf::Message;
 
-std::unique_ptr<FieldPath> FieldPath::Create(
-    const Descriptor *root_type) {
+std::unique_ptr<FieldPath> FieldPath::Create(const Descriptor *root_type) {
   if (root_type == nullptr) {
     return nullptr;
   } else {
@@ -41,12 +40,10 @@ std::unique_ptr<FieldPath> FieldPath::Create(
   }
 }
 
-void FieldPath::Clear() {
-  path_.clear();
-}
+void FieldPath::Clear() { path_.clear(); }
 
 bool FieldPath::Follow(const Message &base, const Message **parent,
-                             const FieldDescriptor **field) const {
+                       const FieldDescriptor **field) const {
   if (base.GetDescriptor() != root_type_) {
     LOG(ERROR) << "Input Message to Follow is of type "
                << base.GetDescriptor()->name()
@@ -57,8 +54,8 @@ bool FieldPath::Follow(const Message &base, const Message **parent,
   int size = path_.size();
   for (int i = 0; i < size - 1; ++i) {
     // Iterating over singular messages.
-    inner_message = &inner_message->GetReflection()->GetMessage(*inner_message,
-                                                                path_[i]);
+    inner_message =
+        &inner_message->GetReflection()->GetMessage(*inner_message, path_[i]);
   }
   *parent = inner_message;
   *field = path_[size - 1];
@@ -67,15 +64,13 @@ bool FieldPath::Follow(const Message &base, const Message **parent,
 
 // Helper function to go through the intermediate message fields.
 bool FieldPath::TraverseIntermediateFields(
-    std::vector<string> path,
-    const google::protobuf::Descriptor **parent) {
+    std::vector<string> path, const google::protobuf::Descriptor **parent) {
   for (int i = 0; i < path.size() - 1; ++i) {
     string &field_name = path[i];
     const FieldDescriptor *field = (*parent)->FindFieldByName(field_name);
     if (field == nullptr) {
       LOG(ERROR) << (*parent)->full_name()
-                 << " does not contain a field named '"
-                 << field_name << "'.";
+                 << " does not contain a field named '" << field_name << "'.";
       return false;
     }
     if (field->type() != FieldDescriptor::TYPE_MESSAGE) {
@@ -91,7 +86,7 @@ bool FieldPath::TraverseIntermediateFields(
 
 // Helper function to parse the terminal scalar field.
 bool FieldPath::ParseTerminalField(const string &terminal_field_name,
-                                         const Descriptor *parent) {
+                                   const Descriptor *parent) {
   const FieldDescriptor *terminal_field =
       parent->FindFieldByName(terminal_field_name);
   if (terminal_field == nullptr) {

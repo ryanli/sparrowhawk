@@ -30,38 +30,42 @@
 // kort lywe. Hulle word 4,3 - 5,7m lank. Die bulle is effens langer as die
 // koeie.
 
+#include <sparrowhawk/normalizer.h>
+
 #include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <sparrowhawk/normalizer.h>
-
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 
-ABSL_FLAG(bool, multi_line_text, false, "Text is spread across multiple lines.");
+ABSL_FLAG(bool, multi_line_text, false,
+          "Text is spread across multiple lines.");
 ABSL_FLAG(std::string, config, "", "Path to the configuration proto.");
-ABSL_FLAG(std::string, path_prefix, "./", "Optional path prefix if not relative.");
+ABSL_FLAG(std::string, path_prefix, "./",
+          "Optional path prefix if not relative.");
 
-void NormalizeInput(const std::string& input,
+void NormalizeInput(const std::string &input,
                     speech::sparrowhawk::Normalizer *normalizer) {
-  const std::vector<std::string> sentences = normalizer->SentenceSplitter(input);
-  for (const auto& sentence : sentences) {
+  const std::vector<std::string> sentences =
+      normalizer->SentenceSplitter(input);
+  for (const auto &sentence : sentences) {
     std::string output;
     normalizer->Normalize(sentence, &output);
     std::cout << output << std::endl;
   }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   absl::ParseCommandLine(argc, argv);
 
   using speech::sparrowhawk::Normalizer;
   std::set_new_handler(FailedNewHandler);
   std::unique_ptr<Normalizer> normalizer;
   normalizer.reset(new Normalizer());
-  CHECK(normalizer->Setup(absl::GetFlag(FLAGS_config), absl::GetFlag(FLAGS_path_prefix)));
+  CHECK(normalizer->Setup(absl::GetFlag(FLAGS_config),
+                          absl::GetFlag(FLAGS_path_prefix)));
   std::string input;
   if (absl::GetFlag(FLAGS_multi_line_text)) {
     std::string line;

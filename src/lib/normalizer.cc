@@ -18,15 +18,16 @@
 using std::string;
 
 #include <google/protobuf/text_format.h>
-#include "src/proto/items.pb.h"
-#include <sparrowhawk/sentence_boundary.h>
-#include "src/proto/serialization_spec.pb.h"
-#include "src/proto/sparrowhawk_configuration.pb.h"
 #include <sparrowhawk/io_utils.h>
 #include <sparrowhawk/protobuf_parser.h>
 #include <sparrowhawk/protobuf_serializer.h>
+#include <sparrowhawk/sentence_boundary.h>
 #include <sparrowhawk/spec_serializer.h>
 #include <sparrowhawk/string_utils.h>
+
+#include "src/proto/items.pb.h"
+#include "src/proto/serialization_spec.pb.h"
+#include "src/proto/sparrowhawk_configuration.pb.h"
 
 namespace speech {
 namespace sparrowhawk {
@@ -34,25 +35,26 @@ namespace sparrowhawk {
 // TODO(rws): We actually need to do something with this.
 const char kDefaultSentenceBoundaryRegexp[] = "[\\.:!\\?] ";
 
-Normalizer::Normalizer() { }
+Normalizer::Normalizer() {}
 
-Normalizer::~Normalizer() { }
+Normalizer::~Normalizer() {}
 
 bool Normalizer::Setup(const string &configuration_proto,
                        const string &pathname_prefix) {
   SparrowhawkConfiguration configuration;
-  string proto_string = IOStream::LoadFileToString(pathname_prefix +
-                                                   "/" + configuration_proto);
-  if (!google::protobuf::TextFormat::ParseFromString(proto_string, &configuration))
+  string proto_string =
+      IOStream::LoadFileToString(pathname_prefix + "/" + configuration_proto);
+  if (!google::protobuf::TextFormat::ParseFromString(proto_string,
+                                                     &configuration))
     return false;
   if (!(configuration.has_tokenizer_grammar()))
-    LOG(ERROR) << "Configuration does not define a tokenizer-classifier grammar";
+    LOG(ERROR)
+        << "Configuration does not define a tokenizer-classifier grammar";
   if (!(configuration.has_verbalizer_grammar()))
     LOG(ERROR) << "Configuration does not define a verbalizer grammar";
   tokenizer_classifier_rules_.reset(new RuleSystem);
   if (!tokenizer_classifier_rules_->LoadGrammar(
-          configuration.tokenizer_grammar(),
-          pathname_prefix))
+          configuration.tokenizer_grammar(), pathname_prefix))
     return false;
   verbalizer_rules_.reset(new RuleSystem);
   if (!verbalizer_rules_->LoadGrammar(configuration.verbalizer_grammar(),
@@ -68,8 +70,8 @@ bool Normalizer::Setup(const string &configuration_proto,
   if (configuration.has_sentence_boundary_exceptions_file()) {
     if (!sentence_boundary_->LoadSentenceBoundaryExceptions(
             configuration.sentence_boundary_exceptions_file())) {
-      LOG(ERROR) << "Cannot load sentence boundary exceptions file: " <<
-                  configuration.sentence_boundary_exceptions_file();
+      LOG(ERROR) << "Cannot load sentence boundary exceptions file: "
+                 << configuration.sentence_boundary_exceptions_file();
     }
   }
   if (configuration.has_serialization_spec()) {
@@ -79,8 +81,8 @@ bool Normalizer::Setup(const string &configuration_proto,
     if (spec_string.empty() ||
         !google::protobuf::TextFormat::ParseFromString(spec_string, &spec) ||
         (spec_serializer_ = Serializer::Create(spec)) == nullptr) {
-      LOG(ERROR) << "Failed to load a valid serialization spec from file: " <<
-                  configuration.serialization_spec();
+      LOG(ERROR) << "Failed to load a valid serialization spec from file: "
+                 << configuration.serialization_spec();
       return false;
     }
   }
@@ -99,8 +101,8 @@ bool Normalizer::Normalize(Utterance *utt, const string &input) const {
   return TokenizeAndClassifyUtt(utt, input) && VerbalizeUtt(utt);
 }
 
-bool Normalizer::NormalizeAndShowLinks(
-    const string &input, string *output) const {
+bool Normalizer::NormalizeAndShowLinks(const string &input,
+                                       string *output) const {
   std::unique_ptr<Utterance> utt;
   utt.reset(new Utterance);
   if (!Normalize(utt.get(), input)) return false;
@@ -117,8 +119,7 @@ bool Normalizer::TokenizeAndClassifyUtt(Utterance *utt,
     LOG(ERROR) << "Failed to compile input string \"" << input << "\"";
     return false;
   }
-  if (!tokenizer_classifier_rules_->ApplyRules(input_fst,
-                                               &output,
+  if (!tokenizer_classifier_rules_->ApplyRules(input_fst, &output,
                                                true /*  use_lookahead */)) {
     LOG(ERROR) << "Failed to tokenize \"" << input << "\"";
     return false;
@@ -152,8 +153,8 @@ bool Normalizer::VerbalizeUtt(Utterance *utt) const {
     if (token->type() == Token::PUNCT) {
       if (token->phrase_break() &&
           (utt->linguistic().words_size() == 0 ||
-           utt->linguistic().words(
-               utt->linguistic().words_size() - 1).id() != "sil")) {
+           utt->linguistic().words(utt->linguistic().words_size() - 1).id() !=
+               "sil")) {
         AddWord(utt, token, "sil");
       }
     } else if (token->type() == Token::SEMIOTIC_CLASS) {
@@ -163,14 +164,16 @@ bool Normalizer::VerbalizeUtt(Utterance *utt) const {
         if (VerbalizeSemioticClass(*token, &words)) {
           AddWords(utt, token, words);
         } else {
-          LOG(WARNING) << "First-pass verbalization FAILED for [" << token_form << "]";
+          LOG(WARNING) << "First-pass verbalization FAILED for [" << token_form
+                       << "]";
           // Back off to verbatim reading
           string original_token = token->name();
           token->Clear();
           token->set_name(original_token);
           token->set_verbatim(original_token);
           if (VerbalizeSemioticClass(*token, &words)) {
-            LOG(WARNING) << "Reversion to verbatim succeeded for [" << original_token << "]";
+            LOG(WARNING) << "Reversion to verbatim succeeded for ["
+                         << original_token << "]";
             AddWords(utt, token, words);
           } else {
             // If we've done our checks right, we should never get here
@@ -182,7 +185,8 @@ bool Normalizer::VerbalizeUtt(Utterance *utt) const {
       if (token->has_wordid()) {
         AddWord(utt, token, token->wordid());
       } else {
-        LOG(ERROR) << "Token [" << token_form << "] has type WORD but there is no word id";
+        LOG(ERROR) << "Token [" << token_form
+                   << "] has type WORD but there is no word id";
       }
     } else {
       LOG(ERROR) << "No type found for [" << token_form << "]";
@@ -203,8 +207,7 @@ bool Normalizer::VerbalizeSemioticClass(const Token &markup,
   } else {
     input_fst = spec_serializer_->Serialize(local);
   }
-  if (!verbalizer_rules_->ApplyRules(input_fst,
-                                     words,
+  if (!verbalizer_rules_->ApplyRules(input_fst, words,
                                      false /* use_lookahead */)) {
     LOG(ERROR) << "Failed to verbalize \"" << ToString(local) << "\"";
     return false;

@@ -32,9 +32,9 @@
 using std::vector;
 
 #include <fst/compat.h>
-#include <thrax/grm-manager.h>
-#include <sparrowhawk/field_path.h>
 #include <re2/re2.h>
+#include <sparrowhawk/field_path.h>
+#include <thrax/grm-manager.h>
 
 #include "src/proto/items.pb.h"
 #include "src/proto/serialization_spec.pb.h"
@@ -98,8 +98,7 @@ class RecordSerializer {
 
   // Serializes a record, escaping record_separator and escape_character.
   // Also serializes various factorizations as parallel arcs into the FST.
-  void SerializeRecord(string *value,
-                       MutableTransducer *fst) const;
+  void SerializeRecord(string *value, MutableTransducer *fst) const;
 
   // Assumes that the (non-repeated) field is set for the parent, and checks
   // that it corresponds to a scalar value. Also, in this case, adds an arc to
@@ -117,13 +116,11 @@ class RecordSerializer {
   // non-repeated field.
   bool SerializeToFstRepeated(const google::protobuf::Message &parent,
                               const google::protobuf::FieldDescriptor &field,
-                              const int index,
-                              MutableTransducer *fst) const;
+                              const int index, MutableTransducer *fst) const;
 
   // Recursively serializes prefix and suffix records into respective
   // transducers using appropriate record serializers.
-  bool SerializeAffixes(const Token &token,
-                        MutableTransducer *prefix_fst,
+  bool SerializeAffixes(const Token &token, MutableTransducer *prefix_fst,
                         MutableTransducer *suffix_fst) const;
 };
 

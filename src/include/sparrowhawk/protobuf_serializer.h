@@ -31,8 +31,8 @@ using std::vector;
 #include <fst/compat.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
-#include <thrax/grm-manager.h>
 #include <re2/re2.h>
+#include <thrax/grm-manager.h>
 
 namespace speech {
 namespace sparrowhawk {
@@ -66,8 +66,7 @@ class ProtobufSerializer {
 
   // Internal constructor that allows selecting the state to begin from.
   ProtobufSerializer(const google::protobuf::Message *message,
-                     MutableTransducer *fst,
-                     StateId state);
+                     MutableTransducer *fst, StateId state);
 
   // Serializes the entire message into the FST, and returns the final state id.
   StateId SerializeToFstInternal();
@@ -76,16 +75,14 @@ class ProtobufSerializer {
   void SerializePermutation(const FieldDescriptorVector &fields);
 
   // Serializes a single field into the FST.
-  StateId SerializeField(const FieldDescriptor *field,
-                         int index,
+  StateId SerializeField(const FieldDescriptor *field, int index,
                          StateId state);
 
   // Serializes a std::string into the FST.
   StateId SerializeString(const std::string &str, StateId state);
 
   // As above, allowing control of whether quotes are optional or not.
-  StateId SerializeString(const std::string &str,
-                          StateId state,
+  StateId SerializeString(const std::string &str, StateId state,
                           bool optional_quotes);
 
   // Serializes a single character into the FST.
@@ -106,7 +103,6 @@ class ProtobufSerializer {
   const StateId initial_state_;
   static const RE2 kReTrailingZeroes;
   static const int kReNumMatchGroups;
-
 };
 
 }  // namespace sparrowhawk

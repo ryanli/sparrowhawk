@@ -28,9 +28,8 @@ namespace sparrowhawk {
 std::vector<string> SplitString(const string &s, const string &delims);
 
 // Splits string s by sep and returns a vector of strings, skipping empties.
-std::vector<string> SplitString(const string &s,
-                           const string &delims,
-                           bool skip_empty);
+std::vector<string> SplitString(const string &s, const string &delims,
+                                bool skip_empty);
 
 // Strips whitespace off the beginning and end
 string StripWhitespace(const string &s);

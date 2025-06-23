@@ -36,15 +36,15 @@ namespace sparrowhawk {
 // Same as in Kestrel: add a phrase boundary at the beginning and ending of the
 // utterance.
 
-void Normalizer::AddPhraseToUtt(Utterance* utt, bool addword) const {
-  Token* token = utt->mutable_linguistic()->add_tokens();
+void Normalizer::AddPhraseToUtt(Utterance *utt, bool addword) const {
+  Token *token = utt->mutable_linguistic()->add_tokens();
   token->set_type(Token::PUNCT);
   token->set_name("");
   token->set_phrase_break(true);
   if (addword) AddWord(utt, token, "sil");
 }
 
-int Normalizer::TokenIndex(Utterance* utt, Token *token) const {
+int Normalizer::TokenIndex(Utterance *utt, Token *token) const {
   for (int i = 0; i < utt->linguistic().tokens_size(); ++i) {
     const class Token *t = &(utt->linguistic().tokens(i));
     if (t == token) {
@@ -54,10 +54,9 @@ int Normalizer::TokenIndex(Utterance* utt, Token *token) const {
   return -1;
 }
 
-Word* Normalizer::AddWord(Utterance* utt,
-                          Token* token,
-                          const string& spelling) const {
-  Word* word = utt->mutable_linguistic()->add_words();
+Word *Normalizer::AddWord(Utterance *utt, Token *token,
+                          const string &spelling) const {
+  Word *word = utt->mutable_linguistic()->add_words();
   int word_index = utt->linguistic().words_size() - 1;
   if (!token->has_first_daughter() || token->first_daughter() == -1) {
     token->set_first_daughter(word_index);
@@ -74,10 +73,10 @@ Word* Normalizer::AddWord(Utterance* utt,
 // We assume that if someone puts a "," in the verbalization grammar, they mean
 // for this to represent a phrase boundary, so we add in logic here fore that.
 
-Word* Normalizer::AddWords(Utterance* utt, Token* token,
-                           const string& words) const {
+Word *Normalizer::AddWords(Utterance *utt, Token *token,
+                           const string &words) const {
   std::vector<string> word_names = SplitString(words, " \t\n");
-  Word* word = NULL;
+  Word *word = NULL;
 
   for (int i = 0; i < word_names.size(); ++i) {
     if (word_names[i] == ",")
@@ -88,7 +87,7 @@ Word* Normalizer::AddWords(Utterance* utt, Token* token,
   return word;  // return last word added.
 }
 
-void Normalizer::CleanFields(Token* markup) const {
+void Normalizer::CleanFields(Token *markup) const {
   markup->clear_first_daughter();
   markup->clear_last_daughter();
   markup->clear_type();
@@ -105,7 +104,7 @@ string Normalizer::InputSubstring(int left, int right) const {
   return input_.substr(left, right - left + 1);
 }
 
-string Normalizer::LinearizeWords(Utterance* utt) const {
+string Normalizer::LinearizeWords(Utterance *utt) const {
   string output;
   for (int i = 0; i < utt->linguistic().words_size(); ++i) {
     if (i) output.append(" ");
@@ -139,7 +138,7 @@ string Normalizer::ShowLinks(Utterance *utt) const {
   return output;
 }
 
-string Normalizer::ToString(const Token& markup) const {
+string Normalizer::ToString(const Token &markup) const {
   ProtobufSerializer serializer(&markup, NULL);
   return serializer.SerializeToString();
 }

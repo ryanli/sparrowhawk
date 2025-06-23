@@ -13,8 +13,8 @@
 // Copyright 2015 and onwards Google, Inc.
 #include <sparrowhawk/io_utils.h>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 using std::ifstream;
 #include <memory>
 

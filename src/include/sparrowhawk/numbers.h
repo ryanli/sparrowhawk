@@ -16,6 +16,7 @@
 #define SPARROWHAWK_NUMBERS_H_
 
 #include <stdint.h>
+
 #include <string>
 using std::string;
 
