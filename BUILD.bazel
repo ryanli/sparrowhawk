@@ -1,8 +1,8 @@
-package(default_visibility = ["//visibility:public"])
-
-load("@protobuf//bazel:proto_library.bzl", "proto_library")
 load("@protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+load("@protobuf//bazel:proto_library.bzl", "proto_library")
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+
+package(default_visibility = ["//visibility:public"])
 
 proto_library(
     name = "sparrowhawk_configuration_proto",
@@ -72,21 +72,6 @@ cc_proto_library(
     deps = [":serialization_spec_proto"],
 )
 
-genrule(
-    name = "make_compatibility_headers",
-    outs = [
-        "sparrowhawk/items.pb.h",
-        "sparrowhawk/rule_order.pb.h",
-        "sparrowhawk/sparrowhawk_configuration.pb.h",
-        "sparrowhawk/serialization_spec.pb.h",
-    ],
-    cmd = """
-        for f in $(OUTS); do
-          echo "#include <src/proto/$$(basename $$f)>" > $$f
-        done
-    """,
-)
-
 cc_library(
     name = "utils",
     srcs = [
@@ -112,8 +97,8 @@ cc_library(
     visibility = ["//visibility:private"],
     deps = [
         ":utils",
-        "@re2",
         "@openfst//:base",
+        "@re2",
     ],
 )
 
@@ -163,16 +148,16 @@ cc_library(
         "src/include",
     ],
     deps = [
-        ":sentence_boundary",
-        ":utils",
-        ":sparrowhawk_configuration_cc_proto",
-        ":rule_order_cc_proto",
-        ":links_cc_proto",
-        ":semiotic_classes_cc_proto",
-        ":serialization_spec_cc_proto",
         ":items_cc_proto",
-        "@re2",
+        ":links_cc_proto",
+        ":rule_order_cc_proto",
+        ":semiotic_classes_cc_proto",
+        ":sentence_boundary",
+        ":serialization_spec_cc_proto",
+        ":sparrowhawk_configuration_cc_proto",
+        ":utils",
         "@openfst//:base",
+        "@re2",
         "@thrax",
     ],
 )
