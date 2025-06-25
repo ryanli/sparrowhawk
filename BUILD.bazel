@@ -1,6 +1,6 @@
 load("@protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
 load("@protobuf//bazel:proto_library.bzl", "proto_library")
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_import", "cc_library")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -86,8 +86,8 @@ cc_library(
     includes = ["src/include"],
     visibility = ["//visibility:private"],
     deps = [
-        "@openfst//:base",
         "@abseil-cpp//absl/log",
+        "@openfst//:base",
     ],
 )
 
@@ -162,6 +162,18 @@ cc_library(
         "@re2",
         "@thrax",
     ],
+)
+
+cc_binary(
+    name = "libnormalizer.so",
+    linkshared = True,
+    deps = [":normalizer"],
+)
+
+cc_import(
+    name = "normalizer_so",
+    hdrs = ["src/includes/normalizer.h"],
+    shared_library = ":libnormalizer.so",
 )
 
 cc_binary(
