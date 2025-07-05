@@ -24,7 +24,8 @@ using std::string;
 using std::vector;
 
 #include <fst/compat.h>
-#include <re2/re2.h>
+
+#include "re2/re2.h"
 
 namespace speech {
 namespace sparrowhawk {

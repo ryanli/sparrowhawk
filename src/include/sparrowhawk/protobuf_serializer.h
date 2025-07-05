@@ -31,8 +31,9 @@ using std::vector;
 #include <fst/compat.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
-#include <re2/re2.h>
 #include <thrax/grm-manager.h>
+
+#include "re2/re2.h"
 
 namespace speech {
 namespace sparrowhawk {
