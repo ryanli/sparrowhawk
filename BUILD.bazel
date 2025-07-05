@@ -84,6 +84,7 @@ cc_library(
     ],
     copts = ["-Wno-sign-compare"],
     includes = ["src/include"],
+    strip_include_prefix = "src/include",
     visibility = ["//visibility:private"],
     deps = [
         "@abseil-cpp//absl/log",
@@ -96,6 +97,7 @@ cc_library(
     srcs = ["src/lib/regexp.cc"],
     hdrs = ["src/include/sparrowhawk/regexp.h"],
     includes = ["src/include"],
+    strip_include_prefix = "src/include",
     visibility = ["//visibility:private"],
     deps = [
         ":utils",
@@ -110,6 +112,7 @@ cc_library(
     hdrs = ["src/include/sparrowhawk/sentence_boundary.h"],
     copts = ["-Wno-sign-compare"],
     includes = ["src/include"],
+    strip_include_prefix = "src/include",
     deps = [
         ":regexp",
         ":utils",
@@ -149,6 +152,7 @@ cc_library(
     includes = [
         "src/include",
     ],
+    strip_include_prefix = "src/include",
     deps = [
         ":items_cc_proto",
         ":links_cc_proto",

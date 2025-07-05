@@ -11,7 +11,7 @@
 // limitations under the License.
 //
 // Copyright 2015 and onwards Google, Inc.
-#include <sparrowhawk/style_serializer.h>
+#include "sparrowhawk/style_serializer.h"
 
 #include <memory>
 #include <string>
@@ -22,10 +22,10 @@ using std::vector;
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
 #include <google/protobuf/text_format.h>
-#include <sparrowhawk/field_path.h>
-#include <sparrowhawk/record_serializer.h>
-#include <sparrowhawk/string_utils.h>
 
+#include "sparrowhawk/field_path.h"
+#include "sparrowhawk/record_serializer.h"
+#include "sparrowhawk/string_utils.h"
 #include "src/proto/items.pb.h"
 #include "src/proto/serialization_spec.pb.h"
 

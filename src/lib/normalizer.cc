@@ -11,20 +11,20 @@
 // limitations under the License.
 //
 // Copyright 2015 and onwards Google, Inc.
-#include <sparrowhawk/normalizer.h>
+#include "sparrowhawk/normalizer.h"
 
 #include <memory>
 #include <string>
 using std::string;
 
 #include <google/protobuf/text_format.h>
-#include <sparrowhawk/io_utils.h>
-#include <sparrowhawk/protobuf_parser.h>
-#include <sparrowhawk/protobuf_serializer.h>
-#include <sparrowhawk/sentence_boundary.h>
-#include <sparrowhawk/spec_serializer.h>
-#include <sparrowhawk/string_utils.h>
 
+#include "sparrowhawk/io_utils.h"
+#include "sparrowhawk/protobuf_parser.h"
+#include "sparrowhawk/protobuf_serializer.h"
+#include "sparrowhawk/sentence_boundary.h"
+#include "sparrowhawk/spec_serializer.h"
+#include "sparrowhawk/string_utils.h"
 #include "src/proto/items.pb.h"
 #include "src/proto/serialization_spec.pb.h"
 #include "src/proto/sparrowhawk_configuration.pb.h"

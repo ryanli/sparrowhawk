@@ -33,10 +33,10 @@ using std::vector;
 
 #include <fst/compat.h>
 #include <google/protobuf/message.h>
-#include <sparrowhawk/field_path.h>
-#include <sparrowhawk/record_serializer.h>
 #include <thrax/grm-manager.h>
 
+#include "sparrowhawk/field_path.h"
+#include "sparrowhawk/record_serializer.h"
 #include "src/proto/items.pb.h"
 #include "src/proto/serialization_spec.pb.h"
 

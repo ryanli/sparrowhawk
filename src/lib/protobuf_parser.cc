@@ -11,13 +11,14 @@
 // limitations under the License.
 //
 // Copyright 2015 and onwards Google, Inc.
+#include "sparrowhawk/protobuf_parser.h"
+
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
-#include <sparrowhawk/numbers.h>
-#include <sparrowhawk/protobuf_parser.h>
 
 #include <algorithm>
 
+#include "sparrowhawk/numbers.h"
 #include "src/proto/items.pb.h"
 
 namespace speech {

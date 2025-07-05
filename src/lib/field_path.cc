@@ -11,7 +11,7 @@
 // limitations under the License.
 //
 // Copyright 2015 and onwards Google, Inc.
-#include <sparrowhawk/field_path.h>
+#include "sparrowhawk/field_path.h"
 
 #include <memory>
 #include <string>
@@ -21,9 +21,9 @@ using std::vector;
 
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
-#include <sparrowhawk/string_utils.h>
 
 #include "absl/log/log.h"
+#include "sparrowhawk/string_utils.h"
 
 namespace speech {
 namespace sparrowhawk {

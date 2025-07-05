@@ -11,7 +11,7 @@
 // limitations under the License.
 //
 // Copyright 2015 and onwards Google, Inc.
-#include <sparrowhawk/regexp.h>
+#include "sparrowhawk/regexp.h"
 
 #include <memory>
 

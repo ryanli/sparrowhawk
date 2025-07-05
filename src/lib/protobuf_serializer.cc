@@ -11,8 +11,9 @@
 // limitations under the License.
 //
 // Copyright 2015 and onwards Google, Inc.
+#include "sparrowhawk/protobuf_serializer.h"
+
 #include <google/protobuf/text_format.h>
-#include <sparrowhawk/protobuf_serializer.h>
 
 #include <algorithm>
 #include <map>

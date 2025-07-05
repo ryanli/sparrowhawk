@@ -11,9 +11,11 @@
 // limitations under the License.
 //
 // Copyright 2015 and onwards Google, Inc.
+#include "sparrowhawk/rule_system.h"
+
 #include <google/protobuf/text_format.h>
-#include <sparrowhawk/io_utils.h>
-#include <sparrowhawk/rule_system.h>
+
+#include "sparrowhawk/io_utils.h"
 
 namespace speech {
 namespace sparrowhawk {

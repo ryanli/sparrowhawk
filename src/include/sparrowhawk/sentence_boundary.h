@@ -25,7 +25,8 @@ using std::string;
 using std::vector;
 
 #include <fst/compat.h>
-#include <sparrowhawk/regexp.h>
+
+#include "sparrowhawk/regexp.h"
 
 namespace speech {
 namespace sparrowhawk {

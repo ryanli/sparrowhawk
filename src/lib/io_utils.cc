@@ -11,7 +11,7 @@
 // limitations under the License.
 //
 // Copyright 2015 and onwards Google, Inc.
-#include <sparrowhawk/io_utils.h>
+#include "sparrowhawk/io_utils.h"
 
 #include <fstream>
 #include <iostream>

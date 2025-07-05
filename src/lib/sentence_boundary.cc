@@ -11,7 +11,7 @@
 // limitations under the License.
 //
 // Copyright 2015 and onwards Google, Inc.
-#include <sparrowhawk/sentence_boundary.h>
+#include "sparrowhawk/sentence_boundary.h"
 
 #include <memory>
 #include <string>
@@ -19,11 +19,10 @@ using std::string;
 #include <vector>
 using std::vector;
 
-#include <sparrowhawk/io_utils.h>
-#include <sparrowhawk/regexp.h>
-#include <sparrowhawk/string_utils.h>
-
 #include "absl/log/log.h"
+#include "sparrowhawk/io_utils.h"
+#include "sparrowhawk/regexp.h"
+#include "sparrowhawk/string_utils.h"
 
 namespace speech {
 namespace sparrowhawk {

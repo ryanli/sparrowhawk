@@ -32,10 +32,10 @@ using std::string;
 using std::vector;
 
 #include <fst/compat.h>
-#include <sparrowhawk/rule_system.h>
-#include <sparrowhawk/sentence_boundary.h>
-#include <sparrowhawk/spec_serializer.h>
 
+#include "sparrowhawk/rule_system.h"
+#include "sparrowhawk/sentence_boundary.h"
+#include "sparrowhawk/spec_serializer.h"
 #include "src/proto/items.pb.h"
 #include "src/proto/sparrowhawk_configuration.pb.h"
 

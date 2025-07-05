@@ -11,7 +11,7 @@
 // limitations under the License.
 //
 // Copyright 2015 and onwards Google, Inc.
-#include <sparrowhawk/string_utils.h>
+#include "sparrowhawk/string_utils.h"
 
 #include <string>
 using std::string;

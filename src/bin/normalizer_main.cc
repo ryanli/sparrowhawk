@@ -30,8 +30,6 @@
 // kort lywe. Hulle word 4,3 - 5,7m lank. Die bulle is effens langer as die
 // koeie.
 
-#include <sparrowhawk/normalizer.h>
-
 #include <iostream>
 #include <memory>
 #include <string>
@@ -40,6 +38,7 @@
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 #include "absl/log/initialize.h"
+#include "sparrowhawk/normalizer.h"
 
 ABSL_FLAG(bool, multi_line_text, false,
           "Text is spread across multiple lines.");
