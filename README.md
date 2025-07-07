@@ -16,11 +16,27 @@ the output words is also available.
 ## Usage
 
 This version is a fork of the original
-[`google/sparrowhawk`](https://github.com/google/sparrowhawk) package, which
-was archived in 2022.
+[`google/sparrowhawk`](https://github.com/google/sparrowhawk) package, archived
+in 2022, with blessings from @rwsproat to keep using the name.
 
 Instead of using autotools for building, this version uses
-[Bazel](https://bazel.build) for dependency management and building.
+[Bazel](https://bazel.build) for dependency management and building, and uses
+C++17 for building. Tested to be working with the text normalization rules
+in https://github.com/NVIDIA/NeMo-text-processing, without having to pull in
+the Python dependencies at runtime.
 
-Tested on Bazel 8.2.1, but should in general work with any version that has
-Bzlmod support.
+To depend on Sparrowhawk, add the following to your `MODULE.bazel`:
+
+```
+bazel_dep(name = "sparrowhawk", version = "2.0.0")
+
+# `git_override` is used before submission to the Bazel Central Repository.
+git_override(
+    module_name = "sparrowhawk",
+    commit = "e3b9cdc5eabd273393aa72ab5060b17ca6853c2d",
+    remote = "https://github.com/ryanli/sparrowhawk",
+)
+```
+
+And add a dependency on `@sparrowhawk//:normalizer_lib` in your C++ files where
+you `#include "sparrowhawk/normalizer.h"`.
