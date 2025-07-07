@@ -13,11 +13,11 @@
 // Copyright 2015 and onwards Google, Inc.
 #include "sparrowhawk/normalizer.h"
 
+#include <google/protobuf/text_format.h>
+
+#include <filesystem>
 #include <memory>
 #include <string>
-using std::string;
-
-#include <google/protobuf/text_format.h>
 
 #include "sparrowhawk/io_utils.h"
 #include "sparrowhawk/protobuf_parser.h"
@@ -29,8 +29,7 @@ using std::string;
 #include "src/proto/serialization_spec.pb.h"
 #include "src/proto/sparrowhawk_configuration.pb.h"
 
-namespace speech {
-namespace sparrowhawk {
+namespace speech::sparrowhawk {
 
 // TODO(rws): We actually need to do something with this.
 const char kDefaultSentenceBoundaryRegexp[] = "[\\.:!\\?] ";
@@ -39,18 +38,18 @@ Normalizer::Normalizer() {}
 
 Normalizer::~Normalizer() {}
 
-bool Normalizer::Setup(const string &configuration_proto,
-                       const string &pathname_prefix) {
+bool Normalizer::Setup(const std::string &configuration_proto,
+                       const std::string &pathname_prefix) {
   SparrowhawkConfiguration configuration;
-  string proto_string =
-      IOStream::LoadFileToString(pathname_prefix + "/" + configuration_proto);
+  std::string proto_string = IOStream::LoadFileToString(
+      std::filesystem::path(pathname_prefix) / configuration_proto);
   if (!google::protobuf::TextFormat::ParseFromString(proto_string,
                                                      &configuration))
     return false;
-  if (!(configuration.has_tokenizer_grammar()))
+  if (!configuration.has_tokenizer_grammar())
     LOG(ERROR)
         << "Configuration does not define a tokenizer-classifier grammar";
-  if (!(configuration.has_verbalizer_grammar()))
+  if (!configuration.has_verbalizer_grammar())
     LOG(ERROR) << "Configuration does not define a verbalizer grammar";
   tokenizer_classifier_rules_.reset(new RuleSystem);
   if (!tokenizer_classifier_rules_->LoadGrammar(
@@ -60,7 +59,7 @@ bool Normalizer::Setup(const string &configuration_proto,
   if (!verbalizer_rules_->LoadGrammar(configuration.verbalizer_grammar(),
                                       pathname_prefix))
     return false;
-  string sentence_boundary_regexp;
+  std::string sentence_boundary_regexp;
   if (configuration.has_sentence_boundary_regexp()) {
     sentence_boundary_regexp = configuration.sentence_boundary_regexp();
   } else {
@@ -69,14 +68,16 @@ bool Normalizer::Setup(const string &configuration_proto,
   sentence_boundary_.reset(new SentenceBoundary(sentence_boundary_regexp));
   if (configuration.has_sentence_boundary_exceptions_file()) {
     if (!sentence_boundary_->LoadSentenceBoundaryExceptions(
+            std::filesystem::path(pathname_prefix) /
             configuration.sentence_boundary_exceptions_file())) {
       LOG(ERROR) << "Cannot load sentence boundary exceptions file: "
                  << configuration.sentence_boundary_exceptions_file();
     }
   }
   if (configuration.has_serialization_spec()) {
-    string spec_string = IOStream::LoadFileToString(
-        pathname_prefix + "/" + configuration.serialization_spec());
+    std::string spec_string =
+        IOStream::LoadFileToString(std::filesystem::path(pathname_prefix) /
+                                   configuration.serialization_spec());
     SerializeSpec spec;
     if (spec_string.empty() ||
         !google::protobuf::TextFormat::ParseFromString(spec_string, &spec) ||
@@ -89,7 +90,8 @@ bool Normalizer::Setup(const string &configuration_proto,
   return true;
 }
 
-bool Normalizer::Normalize(const string &input, string *output) const {
+bool Normalizer::Normalize(const std::string &input,
+                           std::string *output) const {
   std::unique_ptr<Utterance> utt;
   utt.reset(new Utterance);
   if (!Normalize(utt.get(), input)) return false;
@@ -97,12 +99,12 @@ bool Normalizer::Normalize(const string &input, string *output) const {
   return true;
 }
 
-bool Normalizer::Normalize(Utterance *utt, const string &input) const {
+bool Normalizer::Normalize(Utterance *utt, const std::string &input) const {
   return TokenizeAndClassifyUtt(utt, input) && VerbalizeUtt(utt);
 }
 
-bool Normalizer::NormalizeAndShowLinks(const string &input,
-                                       string *output) const {
+bool Normalizer::NormalizeAndShowLinks(const std::string &input,
+                                       std::string *output) const {
   std::unique_ptr<Utterance> utt;
   utt.reset(new Utterance);
   if (!Normalize(utt.get(), input)) return false;
@@ -111,7 +113,7 @@ bool Normalizer::NormalizeAndShowLinks(const string &input,
 }
 
 bool Normalizer::TokenizeAndClassifyUtt(Utterance *utt,
-                                        const string &input) const {
+                                        const std::string &input) const {
   typedef fst::StringCompiler<fst::StdArc> Compiler;
   Compiler compiler(fst::TokenType::BYTE);
   MutableTransducer input_fst, output;
@@ -144,7 +146,7 @@ bool Normalizer::TokenizeAndClassifyUtt(Utterance *utt,
 bool Normalizer::VerbalizeUtt(Utterance *utt) const {
   for (int i = 0; i < utt->linguistic().tokens_size(); ++i) {
     Token *token = utt->mutable_linguistic()->mutable_tokens(i);
-    string token_form = ToString(*token);
+    std::string token_form = ToString(*token);
     token->set_first_daughter(-1);  // Sets to default unset.
     token->set_last_daughter(-1);   // Sets to default unset.
     // Add a single silence for punctuation that forms phrase breaks. This is
@@ -160,14 +162,14 @@ bool Normalizer::VerbalizeUtt(Utterance *utt) const {
     } else if (token->type() == Token::SEMIOTIC_CLASS) {
       if (!token->skip()) {
         LOG(DEBUG) << "Verbalizing: [" << token_form << "]";
-        string words;
+        std::string words;
         if (VerbalizeSemioticClass(*token, &words)) {
           AddWords(utt, token, words);
         } else {
           LOG(WARNING) << "First-pass verbalization FAILED for [" << token_form
                        << "]";
           // Back off to verbatim reading
-          string original_token = token->name();
+          std::string original_token = token->name();
           token->Clear();
           token->set_name(original_token);
           token->set_verbatim(original_token);
@@ -197,7 +199,7 @@ bool Normalizer::VerbalizeUtt(Utterance *utt) const {
 }
 
 bool Normalizer::VerbalizeSemioticClass(const Token &markup,
-                                        string *words) const {
+                                        std::string *words) const {
   Token local(markup);
   CleanFields(&local);
   MutableTransducer input_fst;
@@ -215,9 +217,9 @@ bool Normalizer::VerbalizeSemioticClass(const Token &markup,
   return true;
 }
 
-std::vector<string> Normalizer::SentenceSplitter(const string &input) const {
+std::vector<string> Normalizer::SentenceSplitter(
+    const std::string &input) const {
   return sentence_boundary_->ExtractSentences(input);
 }
 
-}  // namespace sparrowhawk
-}  // namespace speech
+}  // namespace speech::sparrowhawk
