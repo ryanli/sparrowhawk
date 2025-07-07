@@ -1,4 +1,8 @@
-module(name = "sparrowhawk")
+module(
+    name = "sparrowhawk",
+    version = "2.0.0",
+    compatibility_level = 0,
+)
 
 bazel_dep(name = "abseil-cpp", version = "20250512.1")
 bazel_dep(name = "openfst", version = "1.8.4")
