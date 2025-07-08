@@ -29,13 +29,6 @@ To depend on Sparrowhawk, add the following to your `MODULE.bazel`:
 
 ```
 bazel_dep(name = "sparrowhawk", version = "2.0.0")
-
-# `git_override` is used before submission to the Bazel Central Repository.
-git_override(
-    module_name = "sparrowhawk",
-    commit = "e3b9cdc5eabd273393aa72ab5060b17ca6853c2d",
-    remote = "https://github.com/ryanli/sparrowhawk",
-)
 ```
 
 And add a dependency on `@sparrowhawk//:normalizer_lib` in your C++ files where
