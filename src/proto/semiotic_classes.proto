@@ -78,9 +78,9 @@ message Fraction {
 // 'zone' contains an optional time zone which is verbalized letter
 // by letter, eg. PST, GMT etc.
 message Time {
-  optional /* required */ int32 hours = 1;
-  optional /* required */ int32 minutes = 2;
-  optional int32 seconds = 3 [deprecated = true];
+  optional /* required */ string hours = 1;
+  optional /* required */ string minutes = 2;
+  optional string seconds = 3 [deprecated = true];
   // Do not set to false.
   optional bool speak_period = 4;
   optional string suffix = 5 [deprecated = true];
