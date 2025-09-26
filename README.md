@@ -28,7 +28,7 @@ the Python dependencies at runtime.
 To depend on Sparrowhawk, add the following to your `MODULE.bazel`:
 
 ```
-bazel_dep(name = "sparrowhawk", version = "2.0.0")
+bazel_dep(name = "sparrowhawk", version = "2.1.0")
 ```
 
 And add a dependency on `@sparrowhawk//:normalizer_lib` in your C++ files where
