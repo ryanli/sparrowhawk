@@ -194,7 +194,9 @@ bool Normalizer::VerbalizeUtt(Utterance *utt) const {
             AddWords(utt, token, words);
           } else {
             // If we've done our checks right, we should never get here
-            LOG(ERROR) << "Verbalization FAILED for [" << token_form << "]";
+            LOG(ERROR) << "Verbalization FAILED for [" << token_form
+                       << "], falling back to token name";
+            AddWords(utt, token, token->name());
           }
         }
       }
