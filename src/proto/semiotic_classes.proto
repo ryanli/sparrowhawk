@@ -27,16 +27,17 @@ package speech.sparrowhawk;
 // is specified by a string and verbalization via optional
 // morphosyntactic features for gender, case etc.
 message Cardinal {
+  optional string negative = 1;
   // A string of digits optionally prefixed with '-'.
-  required string integer = 1;
-  optional string morphosyntactic_features = 2;
+  required string integer = 2;
+  optional string morphosyntactic_features = 3;
   // Preserve order from what was given in the text
-  optional bool preserve_order = 3;
+  optional bool preserve_order = 4;
   // A string to indicate switching to a separate language, esp. useful for
   // bilingual situations, e.g. when switching between English and Hindi
   // depending on context.
-  optional string code_switch = 4;
-  repeated string field_order = 5;
+  optional string code_switch = 5;
+  repeated string field_order = 6;
 }
 
 // A number that should be read as an ordinal, e.g. "first". The input
@@ -105,8 +106,7 @@ message Time {
 // what is done in Money, except that it is really more general than Money, and
 // should be available to other classes that use Decimal.
 message Decimal {
-  // Set to true or leave unset, do not set to false.
-  optional bool negative = 1;
+  optional string negative = 1;
   optional /* required */ string integer_part = 2;
   optional string fractional_part = 3;
   optional string quantity = 4;

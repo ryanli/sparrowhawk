@@ -18,7 +18,12 @@
 #include <filesystem>
 #include <memory>
 #include <string>
+#include <utility>
 
+#include "absl/status/status.h"
+#include "absl/status/statusor.h"
+#include "absl/strings/str_cat.h"
+#include "absl/strings/str_replace.h"
 #include "sparrowhawk/io_utils.h"
 #include "sparrowhawk/protobuf_parser.h"
 #include "sparrowhawk/protobuf_serializer.h"
@@ -178,20 +183,24 @@ bool Normalizer::VerbalizeUtt(Utterance *utt) const {
       if (!token->skip()) {
         LOG(DEBUG) << "Verbalizing: [" << token_form << "]";
         std::string words;
-        if (VerbalizeSemioticClass(*token, &words)) {
-          AddWords(utt, token, words);
+        if (absl::StatusOr<std::string> verbalized_words =
+                VerbalizeSemioticClass(*token);
+            verbalized_words.ok()) {
+          AddWords(utt, token, *verbalized_words);
         } else {
           LOG(WARNING) << "First-pass verbalization FAILED for [" << token_form
-                       << "]";
+                       << "]:" << verbalized_words.status();
           // Back off to verbatim reading
           std::string original_token = token->name();
           token->Clear();
           token->set_name(original_token);
           token->set_verbatim(original_token);
-          if (VerbalizeSemioticClass(*token, &words)) {
+          if (absl::StatusOr<std::string> verbalized_words =
+                  VerbalizeSemioticClass(*token);
+              verbalized_words.ok()) {
             LOG(WARNING) << "Reversion to verbatim succeeded for ["
                          << original_token << "]";
-            AddWords(utt, token, words);
+            AddWords(utt, token, *verbalized_words);
           } else {
             // If we've done our checks right, we should never get here
             LOG(ERROR) << "Verbalization FAILED for [" << token_form
@@ -215,10 +224,18 @@ bool Normalizer::VerbalizeUtt(Utterance *utt) const {
   return true;
 }
 
-bool Normalizer::VerbalizeSemioticClass(const Token &markup,
-                                        std::string *words) const {
+absl::StatusOr<std::string> Normalizer::VerbalizeSemioticClass(
+    const Token &markup) const {
   Token local(markup);
   CleanFields(&local);
+
+  // NeMo classifier grammars use \u00a0 but their verbalizer grammar doesn't
+  // accept it.
+  if (!local.measure().units().empty()) {
+    std::string units = local.measure().units();
+    absl::StrReplaceAll({{"\u00a0", " "}}, &units);
+    local.mutable_measure()->set_units(std::move(units));
+  }
   MutableTransducer input_fst;
   if (spec_serializer_ == nullptr) {
     ProtobufSerializer serializer(&local, &input_fst);
@@ -226,12 +243,13 @@ bool Normalizer::VerbalizeSemioticClass(const Token &markup,
   } else {
     input_fst = spec_serializer_->Serialize(local);
   }
-  if (!verbalizer_rules_->ApplyRules(input_fst, words,
-                                     false /* use_lookahead */)) {
-    LOG(ERROR) << "Failed to verbalize \"" << DebugString(local) << "\"";
-    return false;
+  std::string words;
+  if (verbalizer_rules_->ApplyRules(input_fst, &words,
+                                    /*use_lookahead=*/false)) {
+    return std::move(words);
   }
-  return true;
+  return absl::InternalError(absl::StrCat(
+      "Error applying verbalizer rules for token [", DebugString(local), "]"));
 }
 
 std::vector<string> Normalizer::SentenceSplitter(
