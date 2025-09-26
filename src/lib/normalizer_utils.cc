@@ -69,19 +69,13 @@ Word *Normalizer::AddWord(Utterance *utt, Token *token,
 
 // Similar to Kestrel, but without the lexicon().ContainsWordId(spelling) logic,
 // which we want to shunt to later processing.
-// We assume that if someone puts a "," in the verbalization grammar, they mean
-// for this to represent a phrase boundary, so we add in logic here fore that.
-
 Word *Normalizer::AddWords(Utterance *utt, Token *token,
                            const string &words) const {
   std::vector<string> word_names = SplitString(words, " \t\n");
   Word *word = NULL;
 
   for (int i = 0; i < word_names.size(); ++i) {
-    if (word_names[i] == ",")
-      word = AddWord(utt, token, "sil");
-    else
-      word = AddWord(utt, token, word_names[i]);
+    word = AddWord(utt, token, word_names[i]);
   }
   return word;  // return last word added.
 }
