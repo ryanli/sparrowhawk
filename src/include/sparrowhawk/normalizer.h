@@ -33,6 +33,7 @@ using std::vector;
 
 #include <fst/compat.h>
 
+#include "absl/status/statusor.h"
 #include "sparrowhawk/rule_system.h"
 #include "sparrowhawk/sentence_boundary.h"
 #include "sparrowhawk/spec_serializer.h"
@@ -131,7 +132,7 @@ class Normalizer {
   // Verbalizes semiotic classes, defaulting to verbatim verbalization for
   // something that is marked as a semiotic class but for which the
   // verbalization grammar fails.
-  bool VerbalizeSemioticClass(const Token &markup, string *words) const;
+  absl::StatusOr<std::string> VerbalizeSemioticClass(const Token &markup) const;
 
   // normalizer.cc
   // Performs verbalization on the input utterance, the second step of
