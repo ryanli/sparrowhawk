@@ -30,6 +30,21 @@
 #include "src/proto/sparrowhawk_configuration.pb.h"
 
 namespace speech::sparrowhawk {
+namespace {
+
+std::string DebugString(const google::protobuf::Message &message) {
+  google::protobuf::TextFormat::Printer printer;
+  printer.SetSingleLineMode(true);
+  printer.SetUseUtf8StringEscaping(true);
+  printer.SetUseShortRepeatedPrimitives(true);
+  std::string out;
+  if (!printer.PrintToString(message, &out)) {
+    LOG(WARNING) << "Error converting message to text format.";
+  }
+  return out;
+}
+
+}  // namespace
 
 // TODO(rws): We actually need to do something with this.
 const char kDefaultSentenceBoundaryRegexp[] = "[\\.:!\\?] ";
@@ -146,7 +161,7 @@ bool Normalizer::TokenizeAndClassifyUtt(Utterance *utt,
 bool Normalizer::VerbalizeUtt(Utterance *utt) const {
   for (int i = 0; i < utt->linguistic().tokens_size(); ++i) {
     Token *token = utt->mutable_linguistic()->mutable_tokens(i);
-    std::string token_form = ToString(*token);
+    std::string token_form = DebugString(*token);
     token->set_first_daughter(-1);  // Sets to default unset.
     token->set_last_daughter(-1);   // Sets to default unset.
     // Add a single silence for punctuation that forms phrase breaks. This is
@@ -211,7 +226,7 @@ bool Normalizer::VerbalizeSemioticClass(const Token &markup,
   }
   if (!verbalizer_rules_->ApplyRules(input_fst, words,
                                      false /* use_lookahead */)) {
-    LOG(ERROR) << "Failed to verbalize \"" << ToString(local) << "\"";
+    LOG(ERROR) << "Failed to verbalize \"" << DebugString(local) << "\"";
     return false;
   }
   return true;
