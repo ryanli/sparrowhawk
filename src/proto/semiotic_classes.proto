@@ -186,12 +186,19 @@ message Money {
   required string currency = 3;
   optional int32 style = 4 [deprecated = true];
   optional string morphosyntactic_features = 5;
-  optional bool preserve_order = 6;
   // A string to indicate switching to a separate language, esp. useful for
   // bilingual languages, e.g. when switching between English and Hindi
   // depending on context.
   optional string code_switch = 7;
   repeated string field_order = 8;
+
+  // Fields used by NeMo:
+  optional string integer_part = 9;
+  optional string fractional_part = 10;
+  optional string currency_maj = 11;
+  optional string currency_min = 12;
+
+  optional bool preserve_order = 13;
 }
 
 // A telephone number.
