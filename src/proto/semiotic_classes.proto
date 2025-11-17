@@ -179,7 +179,7 @@ message Date {
 // 3: "twelve united states dollars and fifty cents"
 message Money {
   required Decimal amount = 1;  // The amount of money
-  optional int64 quantity = 2;  // Optional million/billion etc, as an integer
+  optional string quantity = 2;  // Optional million/billion etc, as an integer
   // Lowercase ISO4217 currency code, e.g. "usd".
   // List of minimally supported set of currencies:
   // grammars/verbalize/universal/money_definition.txt
