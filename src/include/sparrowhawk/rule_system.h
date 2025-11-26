@@ -26,6 +26,7 @@ using std::string;
 #include <google/protobuf/text_format.h>
 #include <thrax/grm-manager.h>
 
+#include "absl/status/statusor.h"
 #include "src/proto/rule_order.pb.h"
 
 namespace speech {
@@ -62,6 +63,8 @@ class RuleSystem {
 
   bool ApplyRules(const Transducer &input, string *output,
                   bool use_lookahead) const;
+
+  absl::StatusOr<string> ApplyRules(const string &input) const;
 
   // Find the named transducer or NULL if nonexistent.
   const Transducer *FindRule(const string &name) const;
