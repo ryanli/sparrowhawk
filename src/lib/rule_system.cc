@@ -13,6 +13,9 @@
 // Copyright 2015 and onwards Google, Inc.
 #include "sparrowhawk/rule_system.h"
 
+#include "absl/status/status.h"
+#include "absl/status/statusor.h"
+#include "absl/strings/str_cat.h"
 #include <google/protobuf/text_format.h>
 
 #include <filesystem>
@@ -166,6 +169,21 @@ bool RuleSystem::ApplyRules(const Transducer &input, std::string *output,
     return false;
   }
   return true;
+}
+
+absl::StatusOr<std::string> RuleSystem::ApplyRules(const std::string &input) const {
+  std::string current(input);
+  for (const Rule &rule : grammar_.rules()) {
+    const std::string &rule_name = rule.main();
+    std::string out;
+    if (grm_->RewriteBytes(rule_name, current, &out)) {
+      current = std::move(out);
+    } else {
+      return absl::InternalError(absl::StrCat(
+          "Error applying rule \"", rule_name, "\" to input \"", input, "\""));
+    }
+  }
+  return std::move(current);
 }
 
 const Transducer *RuleSystem::FindRule(const std::string &name) const {

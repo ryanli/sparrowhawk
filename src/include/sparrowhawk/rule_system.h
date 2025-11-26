@@ -22,6 +22,7 @@
 #include <string>
 using std::string;
 
+#include "absl/status/statusor.h"
 #include <fst/compat.h>
 #include <google/protobuf/text_format.h>
 #include <thrax/grm-manager.h>
@@ -62,6 +63,8 @@ class RuleSystem {
 
   bool ApplyRules(const Transducer &input, string *output,
                   bool use_lookahead) const;
+
+  absl::StatusOr<string> ApplyRules(const string &input) const;
 
   // Find the named transducer or NULL if nonexistent.
   const Transducer *FindRule(const string &name) const;

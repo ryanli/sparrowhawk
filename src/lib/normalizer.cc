@@ -112,6 +112,7 @@ bool Normalizer::Setup(const std::string &configuration_proto,
 
 bool Normalizer::Normalize(const std::string &input,
                            std::string *output) const {
+  LOG(INFO) << "Normalizing input: " << input;
   std::unique_ptr<Utterance> utt;
   utt.reset(new Utterance);
   if (!Normalize(utt.get(), input)) return false;
@@ -243,13 +244,23 @@ absl::StatusOr<std::string> Normalizer::VerbalizeSemioticClass(
   } else {
     input_fst = spec_serializer_->Serialize(local);
   }
+
+  std::string output;
+  fst::StdVectorFst best;
+  fst::ShortestPath(input_fst, &best);
+  fst::Project(&best, fst::ProjectType::OUTPUT);
+  fst::StringPrinter<fst::StdArc> printer(fst::TokenType::BYTE);
+  printer(best, &output);
+  LOG(INFO) << "Input FST: " << output;
+
   std::string words;
-  if (verbalizer_rules_->ApplyRules(input_fst, &words,
-                                    /*use_lookahead=*/false)) {
-    return std::move(words);
+    if (absl::StatusOr<std::string> words = verbalizer_rules_->ApplyRules(output);
+        words.ok()) {
+    return std::move(*words);
+  } else {
+    return absl::InternalError(absl::StrCat(
+        "Error applying verbalizer rules for token [", DebugString(local), "]"));
   }
-  return absl::InternalError(absl::StrCat(
-      "Error applying verbalizer rules for token [", DebugString(local), "]"));
 }
 
 std::vector<string> Normalizer::SentenceSplitter(

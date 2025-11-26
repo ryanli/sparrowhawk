@@ -84,6 +84,12 @@ MutableTransducer Serializer::Serialize(const Token &token) const {
       Concat(&fst, fst_styles);
     }
   }
+
+  std::string output;
+  fst::StringPrinter<fst::StdArc> printer(fst::TokenType::BYTE);
+  printer(fst, &output);
+  LOG(INFO) << "Serialized token: " << output;
+
   return fst;
 }
 
