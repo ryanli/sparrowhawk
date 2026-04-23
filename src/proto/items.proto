@@ -139,6 +139,9 @@ message Token {
 
   optional int32 last_daughter = 31;
 
+  // Alphanumeric reference sequences, such as order numbers or product IDs.
+  optional Alphanumeric alphanumeric = 32;
+
   extensions 1000 to max;
 }
 

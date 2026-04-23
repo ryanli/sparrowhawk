@@ -151,20 +151,18 @@ bool ProtobufParser::ParseMessage(bool eof_allowed, Message *message) {
     if (label == "}") {
       return RecordFieldOrder(message, field_order);  // End of message
     }
-    // Disallow field_order in parsing (and of course in serialization). We
-    // don't want the grammar writer to specify this and have the parser add
-    // additional information since therein massive confusion lies.
-    if (label == "field_order") {
-      LOG(ERROR) << "field_order should not be specified in the input";
-      return false;
-    }
     const FieldDescriptor *field_descriptor =
         descriptor->FindFieldByName(label);
     if (field_descriptor == NULL) {
       LOG(ERROR) << "Unknown field: [" << label << "]";
       return false;
     }
-    field_order.push_back(label);
+    // Track field order for auto-generation, but skip field_order and
+    // preserve_order entries themselves — these are control fields, not
+    // content fields that should appear in the recorded order.
+    if (label != "field_order" && label != "preserve_order") {
+      field_order.push_back(label);
+    }
     if (field_descriptor->cpp_type() == FieldDescriptor::CPPTYPE_MESSAGE) {
       NextState();  // consume opening brace.
       Message *submessage;
@@ -249,6 +247,11 @@ bool ProtobufParser::RecordFieldOrder(Message *message,
     LOG(ERROR)
         << "preserve_order requested but no field_order repeated string fields";
     return false;
+  }
+  // If the tagger already specified field_order entries, use those instead
+  // of auto-generating from the parsed field order.
+  if (reflection->FieldSize(*message, order_field) > 0) {
+    return true;
   }
   for (int i = 0; i < field_order.size(); ++i) {
     reflection->AddString(message, order_field, field_order[i]);

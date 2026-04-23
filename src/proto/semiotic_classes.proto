@@ -268,3 +268,18 @@ message Abbreviation {
   // depending on context.
   optional string code_switch = 3;
 }
+
+// An alphanumeric sequence used for reference codes, order numbers, and
+// similar IDs (e.g. "4472-8851-9Q", "#ORD-8163", "WT-9374-B"). Verbalized
+// digit-by-digit with letter-by-letter pronunciation and comma-separated
+// groups.
+message Alphanumeric {
+  // Literal prefix marker when present, currently only "#".
+  optional string prefix = 1;
+  // Each entry is one group of the sequence. Repeated so that the
+  // verbalizer can insert group separators (", ") between them.
+  repeated string groups = 2;
+  // The original delimiter between groups (e.g. "-"). May be unset when
+  // groups were derived from an auto-split of a run of digits.
+  optional string separator = 3;
+}
