@@ -142,6 +142,9 @@ message Token {
   // Alphanumeric reference sequences, such as order numbers or product IDs.
   optional Alphanumeric alphanumeric = 32;
 
+  // Address spans
+  optional Address address = 33;
+
   extensions 1000 to max;
 }
 

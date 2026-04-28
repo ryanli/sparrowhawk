@@ -283,3 +283,14 @@ message Alphanumeric {
   // groups were derived from an auto-split of a run of digits.
   optional string separator = 3;
 }
+
+// An address span, where ordinal street number and cardinal unit number 
+// are verbalized
+message Address {
+  optional string text = 1;
+  optional string street_direction = 2;
+  optional string street_number = 3;
+  optional string street_type = 4;
+  optional string unit_type = 5;
+  optional string unit_number = 6;
+}
