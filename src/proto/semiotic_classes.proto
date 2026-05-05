@@ -284,13 +284,37 @@ message Alphanumeric {
   optional string separator = 3;
 }
 
-// An address span, where ordinal street number and cardinal unit number 
-// are verbalized
+// An address span containing an ordinal number, a cardinal number, or pass-through text.
 message Address {
+  // Pass-through text: city/state pairs and non-ordinal street names.
+  // e.g. "Boston, MA"  -> text: "Boston, Massachusetts"
+  // e.g. "Main St."    -> text: "Main Street"
   optional string text = 1;
-  optional string street_direction = 2;
-  optional string street_number = 3;
-  optional string street_type = 4;
-  optional string unit_type = 5;
-  optional string unit_number = 6;
+
+  // Text spoken before the ordinal number (e.g. a directional prefix).
+  // e.g. "N 1st St."  -> ordinal_prefix: "North"
+  optional string ordinal_prefix = 2;
+
+  // Raw digits of an ordinal number, stripped of their written suffix.
+  // e.g. "N 1st St."  -> ordinal_number: "1"
+  // Verbalized as ordinal form: "1" -> "first"
+  optional string ordinal_number = 3;
+
+  // Text spoken after the ordinal number (e.g. street type).
+  // e.g. "1st St."    -> ordinal_suffix: "Street"
+  optional string ordinal_suffix = 4;
+
+  // Text spoken before the cardinal number (e.g. unit type).
+  // e.g. "Apt. 4B"    -> cardinal_prefix: "apartment"
+  optional string cardinal_prefix = 5;
+
+  // Raw digits of a cardinal number.
+  // e.g. "Apt. 4B"    -> cardinal_number: "4"
+  // Verbalized as cardinal form: "4" -> "four".
+  optional string cardinal_number = 6;
+
+  // Text spoken after the cardinal number.
+  // e.g. "Apt. 4B"    -> cardinal_suffix: "B"
+  // e.g. "Apt. 4b"    -> cardinal_suffix: "b"
+  optional string cardinal_suffix = 7;
 }
