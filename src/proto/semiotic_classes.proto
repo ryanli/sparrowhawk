@@ -284,37 +284,36 @@ message Alphanumeric {
   optional string separator = 3;
 }
 
-// An address span containing an ordinal number, a cardinal number, or pass-through text.
+// An address span composed of one or more typed components.
 message Address {
-  // Pass-through text: city/state pairs and non-ordinal street names.
-  // e.g. "Boston, MA"  -> text: "Boston, Massachusetts"
-  // e.g. "Main St."    -> text: "Main Street"
-  optional string text = 1;
+  repeated Component components = 1;
 
-  // Text spoken before the ordinal number (e.g. a directional prefix).
-  // e.g. "N 1st St."  -> ordinal_prefix: "North"
-  optional string ordinal_prefix = 2;
+  message Component {
+    oneof kind {
+      // Pass-through text: city/state pairs and non-ordinal street names.
+      // e.g. "Boston, MA" -> text: "Boston, Massachusetts"
+      // e.g. "Main St."   -> text: "Main Street"
+      string text = 1;
 
-  // Raw digits of an ordinal number, stripped of their written suffix.
-  // e.g. "N 1st St."  -> ordinal_number: "1"
-  // Verbalized as ordinal form: "1" -> "first"
-  optional string ordinal_number = 3;
+      // Ordinal street number with directional prefix and street type suffix.
+      // e.g. "N 1st St."  -> ordinal { prefix: "North" number: "1" suffix: "Street" }
+      Number ordinal = 2;
 
-  // Text spoken after the ordinal number (e.g. street type).
-  // e.g. "1st St."    -> ordinal_suffix: "Street"
-  optional string ordinal_suffix = 4;
+      // Cardinal unit number with unit type prefix and alalpha suffix.
+      // e.g. "Apt. 4B"    -> cardinal { prefix: "apartment" number: "4" suffix: "B" }
+      Number cardinal = 3;
+    }
+  }
 
-  // Text spoken before the cardinal number (e.g. unit type).
-  // e.g. "Apt. 4B"    -> cardinal_prefix: "apartment"
-  optional string cardinal_prefix = 5;
+  message Number {
+    // Spoken text before the number.
+    optional string prefix = 1;
 
-  // Raw digits of a cardinal number.
-  // e.g. "Apt. 4B"    -> cardinal_number: "4"
-  // Verbalized as cardinal form: "4" -> "four".
-  optional string cardinal_number = 6;
+    // Raw digits; verbalized as ordinal or cardinal depending on Component.kind.
+    // e.g. "1" -> "first" (ordinal), "4" -> "four" (cardinal)
+    optional string number = 2;
 
-  // Text spoken after the cardinal number.
-  // e.g. "Apt. 4B"    -> cardinal_suffix: "B"
-  // e.g. "Apt. 4b"    -> cardinal_suffix: "b"
-  optional string cardinal_suffix = 7;
+    // Spoken text after the number.
+    optional string suffix = 3;
+  }
 }
