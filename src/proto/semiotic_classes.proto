@@ -285,22 +285,31 @@ message Alphanumeric {
 }
 
 // An address span composed of one or more typed components.
+// e.g. "32 Vassar St, Cambridge, MA 02139, United States" ->
+// tokens { cardinal { integer: "32" } }   
+// tokens { address { components { text: "Vassar Street" } } } 
+// tokens { name: "," } 
+// tokens { address { components { text: "Cambridge, Massachusetts" } } }   
+// tokens { cardinal { integer: "02139" } } 
+// tokens { name: "," } 
+// tokens { name: "United" }   
+// tokens { name: "States" }
 message Address {
   repeated Component components = 1;
 
   message Component {
     oneof kind {
       // Pass-through text: city/state pairs and non-ordinal street names.
-      // e.g. "Boston, MA" -> text: "Boston, Massachusetts"
-      // e.g. "Main St."   -> text: "Main Street"
+      // e.g. "Cambridge, Massachusetts" -> components { text: "Cambridge, Massachusetts" }
+      // e.g. "Vassar St."   -> components { text: "Vassar Street" }
       string text = 1;
 
       // Ordinal street number with directional prefix and street type suffix.
-      // e.g. "N 1st St."  -> ordinal { prefix: "North" number: "1" suffix: "Street" }
+      // e.g. "N 1st St."  -> components { ordinal { prefix: "North" number: "1" suffix: "Street" } }
       Number ordinal = 2;
 
       // Cardinal unit number with unit type prefix and alalpha suffix.
-      // e.g. "Apt. 4B"    -> cardinal { prefix: "apartment" number: "4" suffix: "B" }
+      // e.g. "Apt. 4B"    -> components { cardinal { prefix: "apartment" number: "4" suffix: "B" } }
       Number cardinal = 3;
     }
   }
