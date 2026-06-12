@@ -326,3 +326,17 @@ message Address {
     optional string suffix = 3;
   }
 }
+
+// A numeric range such as "13-50" or "70-72 km".
+message Range {
+  // Raw digits for the lower bound, e.g. "13".
+  required string start = 1;
+  // Raw digits for the upper bound, e.g. "50".
+  required string end = 2;
+  // Optional already-spoken unit or currency word, e.g. "kilometer", "euro".
+  optional string unit = 3;
+  // Language-specific connector word, which changes how "-" is verbalized (e.g. "entre").
+  optional string connector = 4;
+  optional bool preserve_order = 5;
+  repeated string field_order = 6;
+}
