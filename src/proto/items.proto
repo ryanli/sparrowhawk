@@ -145,6 +145,9 @@ message Token {
   // Address spans
   optional Address address = 33;
 
+  // Numeric ranges such as "13-50" or "70-72 km".
+  optional Range range = 34;
+
   extensions 1000 to max;
 }
 
